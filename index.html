@@ -607,10 +607,10 @@
               <h3>Про мене</h3>
               <p id="team-modal-description"></p>
             </section>
-            <section class="team-modal-section team-modal-results" id="team-modal-results-section" hidden>
-              <h3>Результати моїх учнів</h3>
-              <div class="team-modal-results-grid" id="team-modal-results-grid"></div>
-            </section>
+            <div class="modal-results" id="modal-results-section" hidden>
+              <h3>Результати учнів</h3>
+              <div class="results-grid" id="modal-results-grid"></div>
+            </div>
           </div>
         </div>
       </div>
@@ -1008,8 +1008,10 @@
       const TEAM_FILTER_DURATION = 240;
       const BUTTON_THROTTLE_DURATION = 2000;
 
-      const buildResultsPaths = (slug, count) =>
+      const buildResultsPaths = (slug, count = 4) =>
         Array.from({ length: count }, (_, index) => `images/team/results/${slug}/${index + 1}.jpg`);
+
+      const hiddenResultsIds = new Set(["nastya-s", "nastya-h"]);
 
       const teamProfiles = {
         "olga-1": {
@@ -1017,100 +1019,76 @@
           role: "Тренер",
           photo: "images/team/olga-1.jpg",
           description:
-            "Персональний тренер і сертифікований дієтолог. Допомагає вибудувати системний прогрес через індивідуальні навантаження, контроль техніки та грамотну корекцію раціону.",
-          showResults: true,
-          results: buildResultsPaths("olga-1", 4)
+            "Персональний тренер і сертифікований дієтолог. Допомагає вибудувати системний прогрес через індивідуальні навантаження, контроль техніки та грамотну корекцію раціону."
         },
         "olga-2": {
           name: "Числова Ольга",
           role: "Тренер",
           photo: "images/team/olga-2.jpg",
           description:
-            "Персональний тренер і сертифікований дієтолог. Допомагає вибудувати системний прогрес через індивідуальні навантаження, контроль техніки та грамотну корекцію раціону.",
-          showResults: true,
-          results: buildResultsPaths("olga-2", 4)
+            "Персональний тренер і сертифікований дієтолог. Допомагає вибудувати системний прогрес через індивідуальні навантаження, контроль техніки та грамотну корекцію раціону."
         },
         petro: {
           name: "Ільченко Петро",
           role: "Тренер",
           photo: "images/team/petro.jpg",
           description:
-            "Спеціаліст із персональних і спліт-тренувань. Робить акцент на силовому прогресі, дисципліні в залі та зрозумілій роботі зі спортивним харчуванням.",
-          showResults: true,
-          results: buildResultsPaths("petro", 4)
+            "Спеціаліст із персональних і спліт-тренувань. Робить акцент на силовому прогресі, дисципліні в залі та зрозумілій роботі зі спортивним харчуванням."
         },
         kateryna: {
           name: "Сапчук Катерина",
           role: "Тренер",
           photo: "images/team/kateryna.jpg",
-          description: "Професійний тренер клубу PowerPlace.",
-          showResults: true,
-          results: buildResultsPaths("kateryna", 4)
+          description: "Професійний тренер клубу PowerPlace."
         },
         danilo: {
           name: "Дмитрієв Данило",
           role: "Тренер",
           photo: "images/logo.png",
-          description: "Професійний тренер клубу PowerPlace.",
-          showResults: true,
-          results: buildResultsPaths("danilo", 4)
+          description: "Професійний тренер клубу PowerPlace."
         },
         "dmytro-k": {
           name: "Коваленко Дмитро",
           role: "Тренер",
           photo: "images/team/dmytro_k.jpg",
           description:
-            "Професійний тренер із персональних занять, спліт-тренувань та роботи в міні-групах. Дає структурований супровід і тримає фокус на результаті в кожному циклі підготовки.",
-          showResults: true,
-          results: buildResultsPaths("dmytro-k", 4)
+            "Професійний тренер із персональних занять, спліт-тренувань та роботи в міні-групах. Дає структурований супровід і тримає фокус на результаті в кожному циклі підготовки."
         },
         yulia: {
           name: "Солодюк Юлія",
           role: "Тренер",
           photo: "images/team/yulia.jpg",
-          description: "Професійний тренер клубу PowerPlace.",
-          showResults: true,
-          results: buildResultsPaths("yulia", 4)
+          description: "Професійний тренер клубу PowerPlace."
         },
         maryna: {
           name: "Павленко Марина",
           role: "Тренер",
           photo: "images/logo.png",
-          description: "Професійний тренер клубу PowerPlace.",
-          showResults: true,
-          results: buildResultsPaths("maryna", 4)
+          description: "Професійний тренер клубу PowerPlace."
         },
         maksym: {
           name: "Вараниця Максим",
           role: "Тренер",
           photo: "images/logo.png",
-          description: "Професійний тренер клубу PowerPlace.",
-          showResults: true,
-          results: buildResultsPaths("maksym", 4)
+          description: "Професійний тренер клубу PowerPlace."
         },
         roman: {
           name: "Кондратенко Роман",
           role: "Масажист, тренер",
           photo: "images/logo.png",
-          description: "Професійний тренер клубу PowerPlace.",
-          showResults: true,
-          results: buildResultsPaths("roman", 4)
+          description: "Професійний тренер клубу PowerPlace."
         },
         "nastya-s": {
           name: "Стефанчишина Анастасія",
           role: "Адміністратор",
           photo: "images/logo.png",
-          description: "Адміністратор клубу PowerPlace.",
-          showResults: false,
-          results: []
+          description: "Адміністратор клубу PowerPlace."
         },
         "nastya-h": {
           name: "Головаєнко Анастасія",
           role: "Адміністратор",
           photo: "images/logo.png",
-          description: "Адміністратор клубу PowerPlace.",
-          showResults: false,
-          results: []
+          description: "Адміністратор клубу PowerPlace."
         }
       };
 
@@ -1132,38 +1110,63 @@
         document.body.classList.remove("modal-open");
       };
 
-      const renderTeamResults = (profile) => {
+      const renderResultItem = (path, profileName, index) => {
+        const item = document.createElement("a");
+        item.className = "modal-result-item";
+        item.href = path;
+        item.target = "_blank";
+        item.rel = "noreferrer";
+        item.setAttribute("aria-label", `Відкрити результат ${index + 1} для ${profileName}`);
+
+        const image = document.createElement("img");
+        image.src = path;
+        image.alt = `Результат учнів ${profileName} ${index + 1}`;
+        image.loading = "lazy";
+        image.addEventListener("error", () => {
+          item.remove();
+          if (!teamModalResultsGrid.children.length) {
+            teamModalResultsSection.hidden = true;
+            teamModalResultsSection.style.display = "none";
+          }
+        });
+
+        item.appendChild(image);
+        teamModalResultsGrid.appendChild(item);
+      };
+
+      const renderTeamResults = (teamId, profile) => {
         if (!teamModalResultsSection || !teamModalResultsGrid) {
           return;
         }
 
         teamModalResultsGrid.innerHTML = "";
+        teamModalResultsSection.hidden = true;
+        teamModalResultsSection.style.display = "none";
 
-        if (!profile.showResults || !profile.results?.length) {
+        if (hiddenResultsIds.has(teamId)) {
           teamModalResultsSection.hidden = true;
           return;
         }
 
-        teamModalResultsSection.hidden = false;
+        const resultPaths = buildResultsPaths(teamId, 4);
+        const firstPreview = new Image();
 
-        profile.results.forEach((path, index) => {
-          const item = document.createElement("figure");
-          item.className = "team-modal-result";
+        firstPreview.onload = () => {
+          teamModalResultsSection.hidden = false;
+          teamModalResultsSection.style.display = "block";
 
-          const image = document.createElement("img");
-          image.src = path;
-          image.alt = `Результат учнів ${profile.name} ${index + 1}`;
-          image.loading = "lazy";
-          image.addEventListener("error", () => {
-            item.remove();
-            if (!teamModalResultsGrid.children.length) {
-              teamModalResultsSection.hidden = true;
-            }
+          resultPaths.forEach((path, index) => {
+            renderResultItem(path, profile.name, index);
           });
+        };
 
-          item.appendChild(image);
-          teamModalResultsGrid.appendChild(item);
-        });
+        firstPreview.onerror = () => {
+          teamModalResultsGrid.innerHTML = "";
+          teamModalResultsSection.hidden = true;
+          teamModalResultsSection.style.display = "none";
+        };
+
+        firstPreview.src = resultPaths[0];
       };
 
       const openTeamModal = (teamId) => {
@@ -1178,7 +1181,7 @@
         teamModalRole.textContent = profile.role;
         teamModalName.textContent = profile.name;
         teamModalDescription.textContent = profile.description;
-        renderTeamResults(profile);
+        renderTeamResults(teamId, profile);
 
         teamModal.classList.add("is-open");
         teamModal.setAttribute("aria-hidden", "false");

@@ -66,19 +66,32 @@ const getField = (payload, keys) => {
   return "";
 };
 
+const ratingToStars = (ratingValue) => {
+  const normalized = Number.parseInt(sanitize(ratingValue), 10);
+
+  if (!Number.isFinite(normalized) || normalized < 1) {
+    return "Не вказано";
+  }
+
+  return "⭐".repeat(Math.min(normalized, 5));
+};
+
 const buildBookingMessage = ({ name, phone, format }) =>
   [
-    "Нова заявка на запис PowerPlace",
-    `Ім'я: ${sanitize(name) || "Не вказано"}`,
-    `Телефон: ${sanitize(phone) || "Не вказано"}`,
-    `Формат: ${sanitize(format) || "Не вказано"}`
+    "⚡ НОВИЙ ЗАПИС: PowerPlace",
+    "━━━━━━━━━━━━━━",
+    `👤 Клієнт: ${sanitize(name) || "Не вказано"}`,
+    `📞 Телефон: ${sanitize(phone) || "Не вказано"}`,
+    `📅 Формат: ${sanitize(format) || "Не вказано"}`
   ].join("\n");
 
-const buildReviewMessage = ({ name, text }) =>
+const buildReviewMessage = ({ name, rating, text }) =>
   [
-    "Новий відгук PowerPlace",
-    `Ім'я: ${sanitize(name) || "Не вказано"}`,
-    `Текст: ${sanitize(text) || "Не вказано"}`
+    "⭐ НОВИЙ ВІДГУК: PowerPlace",
+    "━━━━━━━━━━━━━━",
+    `👤 Від: ${sanitize(name) || "Не вказано"}`,
+    `📊 Оцінка: ${ratingToStars(rating)}`,
+    `💬 Текст: ${sanitize(text) || "Не вказано"}`
   ].join("\n");
 
 exports.handler = async (event) => {
@@ -151,12 +164,13 @@ exports.handler = async (event) => {
     }
   } else if (formType === "review") {
     const name = getField(payload, ["name", "Ім'я"]);
+    const rating = getField(payload, ["rating", "Оцінка"]);
     const reviewText = getField(payload, ["text", "Текст_відгуку", "Текст"]);
 
-    if (!name && !reviewText) {
+    if (!name && !reviewText && !rating) {
       text = "Порожня заявка";
     } else {
-      text = buildReviewMessage({ name, text: reviewText });
+      text = buildReviewMessage({ name, rating, text: reviewText });
     }
   } else {
     text = buildGenericMessage(payload);
