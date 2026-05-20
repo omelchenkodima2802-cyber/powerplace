@@ -1,0 +1,174 @@
+.theme-effects {
+  position: fixed;
+  inset: 0;
+  z-index: 8;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.theme-particle {
+  position: absolute;
+  top: -12vh;
+  left: 0;
+  color: var(--theme-particle-color);
+  font-size: clamp(16px, 2vw, 24px);
+  opacity: 0.34;
+  text-shadow: 0 0 18px rgba(var(--glow-rgb), 0.24);
+  user-select: none;
+  animation: theme-fall linear infinite;
+}
+
+.theme-particle.is-snow {
+  opacity: 0.6;
+}
+
+.theme-particle.is-flower {
+  opacity: 0.4;
+}
+
+.theme-particle.is-easter {
+  opacity: 0.24;
+}
+
+@keyframes theme-fall {
+  from {
+    transform: translate3d(0, -10vh, 0) rotate(0deg);
+  }
+
+  to {
+    transform: translate3d(var(--particle-drift, 0px), 115vh, 0) rotate(360deg);
+  }
+}
+
+body.theme-valentines {
+  --accent-color: #ff4f9a;
+  --glow-color: #ff85b5;
+  --accent-rgb: 255, 79, 154;
+  --glow-rgb: 255, 133, 181;
+  --accent-glow: rgba(255, 79, 154, 0.28);
+  --theme-radial-1: rgba(255, 79, 154, 0.18);
+  --theme-radial-2: rgba(255, 133, 181, 0.12);
+  --theme-pattern:
+    radial-gradient(circle at 14% 18%, rgba(255, 79, 154, 0.12), transparent 16%),
+    radial-gradient(circle at 84% 10%, rgba(255, 133, 181, 0.08), transparent 18%);
+  --theme-particle-color: rgba(255, 182, 206, 0.42);
+}
+
+body.theme-march8 {
+  --accent-color: #bf6dff;
+  --glow-color: #ff7ecf;
+  --accent-rgb: 191, 109, 255;
+  --glow-rgb: 255, 126, 207;
+  --accent-glow: rgba(191, 109, 255, 0.28);
+  --theme-radial-1: rgba(191, 109, 255, 0.16);
+  --theme-radial-2: rgba(255, 126, 207, 0.12);
+  --theme-pattern:
+    radial-gradient(circle at 18% 16%, rgba(191, 109, 255, 0.1), transparent 14%),
+    radial-gradient(circle at 82% 14%, rgba(255, 126, 207, 0.08), transparent 18%);
+  --theme-particle-color: rgba(242, 198, 255, 0.4);
+}
+
+body.theme-april1 {
+  --accent-color: #25d0c7;
+  --glow-color: #ffe86e;
+  --accent-rgb: 37, 208, 199;
+  --glow-rgb: 255, 232, 110;
+  --accent-glow: rgba(37, 208, 199, 0.28);
+  --theme-radial-1: rgba(37, 208, 199, 0.18);
+  --theme-radial-2: rgba(255, 232, 110, 0.12);
+  --theme-pattern:
+    linear-gradient(135deg, rgba(255, 232, 110, 0.06), transparent 42%),
+    linear-gradient(315deg, rgba(37, 208, 199, 0.06), transparent 46%);
+}
+
+body.theme-april1 .gallery-card:nth-child(odd) img,
+body.theme-april1 .team-card:nth-child(odd),
+body.theme-april1 .service-card:nth-child(odd) {
+  transform: rotate(-1.4deg);
+}
+
+body.theme-april1 .socials a i,
+body.theme-april1 .review-quote i,
+body.theme-april1 .power-bar-icon i,
+body.theme-april1 .back-to-top i {
+  transform: scaleX(-1) rotate(-12deg);
+}
+
+body.theme-april1 .gallery-card:nth-child(odd) img {
+  filter: hue-rotate(175deg) saturate(1.2);
+}
+
+body.theme-independence {
+  --accent-color: #1f79ff;
+  --glow-color: #ffd84d;
+  --accent-rgb: 31, 121, 255;
+  --glow-rgb: 255, 216, 77;
+  --accent-glow: rgba(31, 121, 255, 0.28);
+  --theme-radial-1: rgba(31, 121, 255, 0.18);
+  --theme-radial-2: rgba(255, 216, 77, 0.12);
+  --theme-pattern:
+    linear-gradient(90deg, rgba(31, 121, 255, 0.06), transparent 46%, rgba(255, 216, 77, 0.06) 100%);
+}
+
+body.theme-newyear {
+  --accent-color: #8ecbff;
+  --glow-color: #f9fdff;
+  --accent-rgb: 142, 203, 255;
+  --glow-rgb: 249, 253, 255;
+  --accent-glow: rgba(142, 203, 255, 0.26);
+  --theme-radial-1: rgba(142, 203, 255, 0.1);
+  --theme-radial-2: rgba(249, 253, 255, 0.06);
+  --theme-pattern:
+    radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.04), transparent 14%),
+    radial-gradient(circle at 78% 12%, rgba(142, 203, 255, 0.05), transparent 18%);
+  --theme-particle-color: rgba(255, 255, 255, 0.24);
+}
+
+body.theme-newyear .theme-effects {
+  z-index: -1 !important;
+  opacity: 0.34;
+  pointer-events: none !important;
+}
+
+body.theme-newyear .theme-particle {
+  z-index: -1 !important;
+  pointer-events: none !important;
+  text-shadow: 0 0 10px rgba(var(--glow-rgb), 0.12);
+}
+
+body.theme-newyear .theme-effects * {
+  z-index: -1 !important;
+  pointer-events: none !important;
+}
+
+body.theme-easter {
+  --accent-color: #4d8dff;
+  --glow-color: #e7c35a;
+  --accent-rgb: 77, 141, 255;
+  --glow-rgb: 231, 195, 90;
+  --accent-glow: rgba(77, 141, 255, 0.28);
+  --theme-radial-1: rgba(77, 141, 255, 0.16);
+  --theme-radial-2: rgba(231, 195, 90, 0.12);
+  --theme-pattern:
+    radial-gradient(circle at 12% 18%, rgba(231, 195, 90, 0.08), transparent 12%),
+    radial-gradient(circle at 88% 16%, rgba(77, 141, 255, 0.08), transparent 15%),
+    repeating-linear-gradient(135deg, rgba(231, 195, 90, 0.04) 0 10px, transparent 10px 24px);
+  --theme-particle-color: rgba(255, 227, 149, 0.36);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .theme-particle {
+    animation: none;
+  }
+
+  body.theme-april1 .gallery-card:nth-child(odd) img,
+  body.theme-april1 .team-card:nth-child(odd),
+  body.theme-april1 .service-card:nth-child(odd),
+  body.theme-april1 .socials a i,
+  body.theme-april1 .review-quote i,
+  body.theme-april1 .power-bar-icon i,
+  body.theme-april1 .back-to-top i {
+    transform: none;
+    filter: none;
+  }
+}
