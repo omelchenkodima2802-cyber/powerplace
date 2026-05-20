@@ -150,20 +150,25 @@ ul {
   position: sticky;
   top: 0;
   z-index: 100;
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  background: rgba(15, 15, 16, 0.82);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  background: rgba(15, 15, 16, 0.94);
   border-bottom: 1px solid var(--white-soft);
-  transition:
-    background 0.25s ease,
-    box-shadow 0.25s ease,
-    border-color 0.25s ease;
+  transition: all 0.4s ease;
 }
 
 .site-header.is-scrolled {
-  background: rgba(15, 15, 16, 0.9);
+  background: rgba(15, 15, 16, 0.98);
   border-bottom-color: var(--glass-border);
   box-shadow: 0 16px 40px rgba(0, 0, 0, 0.28);
+}
+
+.site-header.header-shrunk {
+  background: rgba(10, 10, 11, 0.95);
+  border-bottom-color: var(--glass-border);
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.34);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
 .header-inner {
@@ -172,6 +177,7 @@ ul {
   justify-content: space-between;
   gap: 20px;
   min-height: 84px;
+  transition: all 0.4s ease;
 }
 
 .logo {
@@ -181,6 +187,9 @@ ul {
   font-size: 1.4rem;
   font-weight: 800;
   letter-spacing: 0.04em;
+  position: relative;
+  z-index: 1;
+  transition: all 0.4s ease;
 }
 
 .site-header .logo {
@@ -194,10 +203,17 @@ ul {
   width: auto;
   display: block;
   transform-origin: center;
-  transition:
-    transform 0.25s ease;
+  transition: all 0.4s ease;
   filter: none;
   background: transparent;
+}
+
+.site-header.header-shrunk .header-inner {
+  min-height: 60px;
+}
+
+.site-header.header-shrunk .logo img {
+  height: 52px;
 }
 
 .site-header .logo:hover img,
@@ -212,6 +228,9 @@ ul {
   justify-content: center;
   flex: 1 1 auto;
   min-width: 0;
+  position: relative;
+  z-index: 1;
+  transition: all 0.4s ease;
 }
 
 .nav a {
@@ -219,6 +238,17 @@ ul {
   font-weight: 500;
   font-size: 1.1rem;
   transition: color 0.3s ease, text-shadow 0.3s ease;
+}
+
+.header-cta {
+  position: relative;
+  z-index: 1;
+  transition: all 0.4s ease;
+}
+
+.site-header.header-shrunk .header-cta {
+  min-height: 44px;
+  padding-inline: 20px;
 }
 
 .nav a:hover,
@@ -300,6 +330,7 @@ ul {
 .hero {
   position: relative;
   overflow: hidden;
+  isolation: isolate;
   padding: 96px 0 84px;
   min-height: calc(100vh - 84px);
   display: flex;
@@ -1618,6 +1649,7 @@ ul {
   color: var(--text);
   font: inherit;
   outline: none;
+  white-space: pre-wrap;
   transition:
     border-color 0.25s ease,
     box-shadow 0.25s ease,
@@ -2019,6 +2051,20 @@ body.theme-modal-open {
 
 .form-field select {
   appearance: none;
+  -webkit-appearance: none;
+  padding-right: 52px;
+  border-color: rgba(var(--glow-rgb), 0.4);
+  background:
+    linear-gradient(45deg, transparent 50%, var(--accent-strong) 50%) calc(100% - 24px) calc(50% - 3px) / 7px 7px no-repeat,
+    linear-gradient(135deg, var(--accent-strong) 50%, transparent 50%) calc(100% - 18px) calc(50% - 3px) / 7px 7px no-repeat,
+    rgba(15, 15, 16, 0.96);
+  color: #ffffff;
+  color-scheme: dark;
+}
+
+.form-field select option {
+  background: #0f0f10;
+  color: #ffffff;
 }
 
 .form-field input::placeholder {
@@ -2032,6 +2078,13 @@ body.theme-modal-open {
     0 0 0 4px rgba(30, 144, 255, 0.08),
     0 12px 24px rgba(0, 0, 0, 0.12);
   background: rgba(255, 255, 255, 0.05);
+}
+
+.form-field select:focus {
+  background:
+    linear-gradient(45deg, transparent 50%, var(--accent-strong) 50%) calc(100% - 24px) calc(50% - 3px) / 7px 7px no-repeat,
+    linear-gradient(135deg, var(--accent-strong) 50%, transparent 50%) calc(100% - 18px) calc(50% - 3px) / 7px 7px no-repeat,
+    rgba(15, 15, 16, 0.98);
 }
 
 .booking-actions {
@@ -2724,6 +2777,10 @@ body.theme-modal-open {
     padding: 16px 0;
   }
 
+  .site-header.header-shrunk .header-inner {
+    padding: 8px 0;
+  }
+
   .nav {
     order: 3;
     width: 100%;
@@ -2734,6 +2791,10 @@ body.theme-modal-open {
 
   .header-cta {
     display: none;
+  }
+
+  .site-header.header-shrunk .logo img {
+    height: 48px;
   }
 
   .hero {

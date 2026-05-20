@@ -639,11 +639,13 @@
             </button>
             <div class="faq-answer rules-answer">
               <div class="rules-copy">
-                <p>
-                  <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
-                  Відвідування за абонементом або разове. Активація протягом 3
-                  місяців з дати покупки.
-                </p>
+                <ul class="rules-bullet-list">
+                  <li>Відвідування клубу можливе за разовим візитом або за абонементом.</li>
+                  <li>Абонемент активується з дати першого відвідування клубу.</li>
+                  <li>Невикористаний абонемент потрібно активувати протягом 3 місяців з дати покупки.</li>
+                  <li>Факт відвідування клубу означає ознайомлення клієнта з внутрішніми правилами PowerPlace та згоду з ними.</li>
+                  <li>Адміністрація клубу надає послуги відповідно до чинного графіка роботи та актуальних тарифів.</li>
+                </ul>
               </div>
             </div>
           </article>
@@ -668,14 +670,6 @@
                     <span class="rules-freeze-term" role="cell">3 міс</span>
                     <strong class="rules-freeze-days" role="cell">15 днів</strong>
                   </div>
-                  <div class="rules-freeze-row" role="row">
-                    <span class="rules-freeze-term" role="cell">6 міс</span>
-                    <strong class="rules-freeze-days" role="cell">30 днів</strong>
-                  </div>
-                  <div class="rules-freeze-row" role="row">
-                    <span class="rules-freeze-term" role="cell">12 міс</span>
-                    <strong class="rules-freeze-days" role="cell">45 днів</strong>
-                  </div>
                 </div>
               </div>
             </div>
@@ -689,10 +683,11 @@
             <div class="faq-answer rules-answer">
               <div class="rules-copy">
                 <ul class="rules-bullet-list">
-                  <li>Змінне взуття.</li>
-                  <li>Заборона їжі в залі.</li>
-                  <li>Діти до 16 років тільки з тренером.</li>
-                  <li>Повернення інвентарю.</li>
+                  <li>Для тренувань обов'язкові чисте змінне спортивне взуття та охайний одяг.</li>
+                  <li>У тренувальній зоні заборонено вживати їжу; напої мають бути в закритих пляшках або шейкерах.</li>
+                  <li>Діти до 16 років можуть перебувати у клубі лише разом із тренером.</li>
+                  <li>Після завершення вправ інвентар і обладнання потрібно повертати на відведені місця.</li>
+                  <li>Під час перебування в клубі необхідно дотримуватися чистоти, техніки безпеки та поважати інших відвідувачів.</li>
                 </ul>
               </div>
             </div>
@@ -705,11 +700,11 @@
             </button>
             <div class="faq-answer rules-answer">
               <div class="rules-copy">
-                <p>
-                  Тривалість <strong><span class="rules-accent">60 хв.</span></strong>
-                  Скасування за <strong><span class="rules-accent">3 години</span></strong>.
-                  Абонемент діє <strong>60 днів</strong>.
-                </p>
+                <ul class="rules-bullet-list">
+                  <li>Тривалість одного персонального тренування становить <span class="rules-accent">60 хвилин</span>.</li>
+                  <li>Скасування або перенесення персонального тренування можливе не пізніше ніж за <span class="rules-accent">3 години</span> до початку.</li>
+                  <li>Абонемент на персональні тренування діє <span class="rules-accent">60 днів</span> з моменту активації.</li>
+                </ul>
               </div>
             </div>
           </article>
@@ -721,16 +716,12 @@
             </button>
             <div class="faq-answer rules-answer">
               <div class="rules-copy">
-                <p>
-                  <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
-                  Клуб не несе відповідальності за особисті речі, залишені без
-                  нагляду поза шафками або спеціально відведеними місцями.
-                </p>
-                <p>
-                  Адміністрація клубу має право змінювати вартість послуг,
-                  графік роботи та внутрішні правила з попереднім інформуванням
-                  клієнтів у доступних каналах комунікації.
-                </p>
+                <ul class="rules-bullet-list">
+                  <li>Клуб не несе відповідальності за особисті речі, залишені без нагляду поза шафками або спеціально відведеними місцями.</li>
+                  <li>Клієнт самостійно несе відповідальність за стан свого здоров'я та повинен оцінювати допустимість фізичних навантажень перед тренуванням.</li>
+                  <li>У разі погіршення самопочуття під час заняття необхідно негайно припинити тренування та звернутися до адміністратора або тренера.</li>
+                  <li>Адміністрація клубу має право змінювати вартість послуг, графік роботи та внутрішні правила з попереднім інформуванням клієнтів у доступних каналах комунікації.</li>
+                </ul>
               </div>
             </div>
           </article>
@@ -1012,6 +1003,27 @@
         Array.from({ length: count }, (_, index) => `images/team/results/${slug}/${index + 1}.jpg`);
 
       const hiddenResultsIds = new Set(["nastya-s", "nastya-h"]);
+      const FORM_COOLDOWN_MS = 60000;
+      const STORAGE_KEYS = {
+        sessionId: "powerplace.session.id",
+        bookingSessionMark: "powerplace.booking.session.mark",
+        bookingCooldown: "powerplace.booking.cooldown",
+        reviewCooldown: "powerplace.review.cooldown"
+      };
+      const cooldownTimers = new Map();
+
+      const getSessionId = () => {
+        let sessionId = sessionStorage.getItem(STORAGE_KEYS.sessionId);
+
+        if (!sessionId) {
+          sessionId = `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+          sessionStorage.setItem(STORAGE_KEYS.sessionId, sessionId);
+        }
+
+        return sessionId;
+      };
+
+      const sessionId = getSessionId();
 
       const teamProfiles = {
         "olga-1": {
@@ -1325,11 +1337,114 @@
 
       const syncHeaderState = () => {
         header?.classList.toggle("is-scrolled", window.scrollY > 12);
+        header?.classList.toggle("header-shrunk", window.scrollY > 50);
         backToTopButton?.classList.toggle("is-visible", window.scrollY > 300);
       };
 
       const sanitizePhoneInput = (value) =>
         value.replace(/[^+\d\s-]/g, "").slice(0, 15);
+
+      const trimFieldValue = (form, fieldName) => {
+        const field = form.elements.namedItem(fieldName);
+
+        if (field && "value" in field) {
+          field.value = field.value.trim();
+        }
+      };
+
+      const getCooldownKey = (formType) =>
+        formType === "booking" ? STORAGE_KEYS.bookingCooldown : STORAGE_KEYS.reviewCooldown;
+
+      const applyCooldownState = ({ formType, submitButton, submitLabelElement, defaultText }) => {
+        if (!submitButton || !submitLabelElement) {
+          return false;
+        }
+
+        const cooldownKey = getCooldownKey(formType);
+        const existingTimer = cooldownTimers.get(cooldownKey);
+
+        if (existingTimer) {
+          window.clearInterval(existingTimer);
+          cooldownTimers.delete(cooldownKey);
+        }
+
+        const expiresAt = Number(localStorage.getItem(cooldownKey) || 0);
+
+        if (!expiresAt || expiresAt <= Date.now()) {
+          localStorage.removeItem(cooldownKey);
+          submitButton.disabled = false;
+          submitButton.removeAttribute("aria-disabled");
+          submitLabelElement.textContent = defaultText;
+          return false;
+        }
+
+        let intervalId = 0;
+
+        const tick = () => {
+          const remainingSeconds = Math.max(0, Math.ceil((expiresAt - Date.now()) / 1000));
+
+          submitButton.disabled = true;
+          submitButton.setAttribute("aria-disabled", "true");
+          submitLabelElement.textContent = `${defaultText} (${remainingSeconds}s)`;
+
+          if (remainingSeconds <= 0) {
+            window.clearInterval(intervalId);
+            cooldownTimers.delete(cooldownKey);
+            localStorage.removeItem(cooldownKey);
+            submitButton.disabled = false;
+            submitButton.removeAttribute("aria-disabled");
+            submitLabelElement.textContent = defaultText;
+          }
+        };
+
+        tick();
+        intervalId = window.setInterval(tick, 1000);
+        cooldownTimers.set(cooldownKey, intervalId);
+        return true;
+      };
+
+      const startCooldown = ({ formType, submitButton, submitLabelElement, defaultText }) => {
+        const cooldownKey = getCooldownKey(formType);
+        localStorage.setItem(cooldownKey, String(Date.now() + FORM_COOLDOWN_MS));
+        applyCooldownState({ formType, submitButton, submitLabelElement, defaultText });
+      };
+
+      const hasSubmittedBookingInSession = () =>
+        localStorage.getItem(STORAGE_KEYS.bookingSessionMark) === sessionId;
+
+      const markBookingSubmittedInSession = () => {
+        localStorage.setItem(STORAGE_KEYS.bookingSessionMark, sessionId);
+      };
+
+      const validateFormBeforeSubmit = (form, formType) => {
+        if (formType === "booking") {
+          trimFieldValue(form, "Ім'я");
+          trimFieldValue(form, "Телефон");
+
+          const name = String(form.elements.namedItem("Ім'я")?.value || "").trim();
+          const phone = String(form.elements.namedItem("Телефон")?.value || "").trim();
+          const format = String(form.elements.namedItem("Послуга")?.value || "").trim();
+
+          if (!name || !phone || !format) {
+            return "Будь ласка, заповніть ім'я, телефон і оберіть формат.";
+          }
+        }
+
+        if (formType === "review") {
+          trimFieldValue(form, "Ім'я");
+          trimFieldValue(form, "Текст_відгуку");
+
+          const name = String(form.elements.namedItem("Ім'я")?.value || "").trim();
+          const rating = String(form.elements.namedItem("Оцінка")?.value || "").trim();
+          const reviewText = String(form.elements.namedItem("Текст_відгуку")?.value || "").trim();
+
+          if (!name || !rating || !reviewText) {
+            return "Будь ласка, заповніть ім'я, оцінку та текст відгуку.";
+          }
+        }
+
+        return "";
+      };
 
       const buildTelegramPayload = (form, formType) => {
         const payload = Object.fromEntries(new FormData(form));
@@ -1411,6 +1526,15 @@
           return;
         }
 
+        const submitLabel = submitButton?.querySelector(".button-label");
+
+        applyCooldownState({
+          formType: form.dataset.formType || typeConfig.formType,
+          submitButton,
+          submitLabelElement: submitLabel,
+          defaultText: typeConfig.defaultText
+        });
+
         form.onsubmit = async function(e) {
           e.preventDefault();
           console.log("Починаю відправку форми:", id);
@@ -1422,9 +1546,21 @@
           feedbackElement.textContent = "";
           feedbackElement.classList.remove("is-error", "is-success");
 
-          const submitLabel = submitButton?.querySelector(".button-label");
+          if ((form.dataset.formType || typeConfig.formType) === "booking" && hasSubmittedBookingInSession()) {
+            feedbackElement.textContent = "Ви вже залишили заявку, ми скоро зв'яжемося з вами";
+            feedbackElement.classList.add("is-success");
+            return;
+          }
 
-          await submitFormToTelegram(form, {
+          const validationMessage = validateFormBeforeSubmit(form, form.dataset.formType || typeConfig.formType);
+
+          if (validationMessage) {
+            feedbackElement.textContent = validationMessage;
+            feedbackElement.classList.add("is-error");
+            return;
+          }
+
+          const wasSent = await submitFormToTelegram(form, {
             formType: form.dataset.formType || typeConfig.formType,
             feedbackElement,
             submitButton,
@@ -1434,6 +1570,19 @@
             successMessage: typeConfig.successMessage,
             errorMessage: typeConfig.errorMessage
           });
+
+          if (wasSent) {
+            if ((form.dataset.formType || typeConfig.formType) === "booking") {
+              markBookingSubmittedInSession();
+            }
+
+            startCooldown({
+              formType: form.dataset.formType || typeConfig.formType,
+              submitButton,
+              submitLabelElement: submitLabel,
+              defaultText: typeConfig.defaultText
+            });
+          }
         };
       };
 
