@@ -485,7 +485,7 @@
           </button>
         </div>
 
-        <div class="reviews-grid">
+        <div class="reviews-grid" id="reviews-grid">
           <article class="review-card reveal">
             <div class="review-quote">
               <i class="fa-solid fa-quote-left" aria-hidden="true"></i>
@@ -980,6 +980,7 @@
       const bookingPhone = document.querySelector("#booking-phone");
       const bookingFeedback = document.querySelector("#booking-feedback");
       const bookingSubmit = bookingForm?.querySelector(".booking-submit");
+      const reviewsGrid = document.querySelector("#reviews-grid");
       const faqItems = document.querySelectorAll(".faq-item");
       const reviewModal = document.querySelector("#review-modal");
       const reviewModalOpenButtons = document.querySelectorAll("[data-open-review-modal]");
@@ -1015,6 +1016,11 @@
       let modalScrollPosition = 0;
       let modalAutoCloseTimer = 0;
       let previousBodyOverflow = "";
+      const fallbackReviews = Array.from(reviewsGrid?.querySelectorAll(".review-card") || []).map((card) => ({
+        text: card.querySelector("p")?.textContent?.trim() || "",
+        name: card.querySelector("strong")?.textContent?.trim() || "",
+        rating: null
+      }));
 
       const clearModalAutoCloseTimer = () => {
         if (modalAutoCloseTimer) {
@@ -1047,6 +1053,65 @@
         }
 
         return sessionId;
+      };
+
+      const createReviewCard = (review) => {
+        const article = document.createElement("article");
+        article.className = "review-card is-visible";
+
+        const quote = document.createElement("div");
+        quote.className = "review-quote";
+        quote.innerHTML = '<i class="fa-solid fa-quote-left" aria-hidden="true"></i>';
+
+        const text = document.createElement("p");
+        text.textContent = String(review?.text || "").trim();
+
+        const author = document.createElement("strong");
+        const normalizedRating = Number.parseInt(String(review?.rating || ""), 10);
+        const stars = Number.isFinite(normalizedRating) && normalizedRating > 0
+          ? ` · ${"⭐".repeat(Math.min(normalizedRating, 5))}`
+          : "";
+        author.textContent = `${String(review?.name || "Гість PowerPlace").trim() || "Гість PowerPlace"}${stars}`;
+
+        article.append(quote, text, author);
+        return article;
+      };
+
+      const renderReviews = (reviews) => {
+        if (!reviewsGrid) {
+          return;
+        }
+
+        const items = Array.isArray(reviews) && reviews.length ? reviews : fallbackReviews;
+        reviewsGrid.innerHTML = "";
+
+        items.forEach((review) => {
+          reviewsGrid.appendChild(createReviewCard(review));
+        });
+      };
+
+      const loadApprovedReviews = async () => {
+        if (!reviewsGrid) {
+          return;
+        }
+
+        try {
+          const response = await fetch("/api/get-reviews", {
+            headers: {
+              Accept: "application/json"
+            }
+          });
+
+          if (!response.ok) {
+            throw new Error(`Failed to load reviews: ${response.status}`);
+          }
+
+          const result = await response.json();
+          renderReviews(Array.isArray(result?.reviews) ? result.reviews : fallbackReviews);
+        } catch (error) {
+          console.log("Не вдалося завантажити відгуки з API, використовую fallback:", error);
+          renderReviews(fallbackReviews);
+        }
       };
 
       const sessionId = getSessionId();
@@ -1713,6 +1778,7 @@
       });
 
       syncHeaderState();
+      loadApprovedReviews();
       window.addEventListener("scroll", syncHeaderState, { passive: true });
       applyTeamFilter("all");
 

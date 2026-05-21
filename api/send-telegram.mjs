@@ -1,101 +1,16 @@
-const TELEGRAM_API_BASE = "https://api.telegram.org";
-
-const setCorsHeaders = (response) => {
-  response.setHeader("Access-Control-Allow-Origin", "*");
-  response.setHeader("Access-Control-Allow-Headers", "Content-Type");
-  response.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
-};
-
-const sendJson = (response, statusCode, body) => {
-  setCorsHeaders(response);
-  response.status(statusCode).json(body);
-};
-
-const sanitize = (value) => String(value || "").trim();
-
-const parseRequestBody = (request) => {
-  const rawBody = request.body;
-  const contentType = sanitize(request.headers?.["content-type"] || request.headers?.["Content-Type"]).toLowerCase();
-
-  console.log("Raw body received:", rawBody);
-  console.log("Content-Type received:", contentType || "not provided");
-
-  if (!rawBody) {
-    return {};
-  }
-
-  if (typeof rawBody === "string") {
-    const trimmed = rawBody.trim();
-
-    if (!trimmed) {
-      return {};
-    }
-
-    if (contentType.includes("application/json") || trimmed.startsWith("{") || trimmed.startsWith("[")) {
-      return JSON.parse(trimmed);
-    }
-
-    const params = new URLSearchParams(trimmed);
-    return Object.fromEntries(params.entries());
-  }
-
-  if (typeof rawBody === "object") {
-    return rawBody;
-  }
-
-  return {};
-};
-
-const buildGenericMessage = (payload) => {
-  const entries = Object.entries(payload || {}).filter(([key]) => key !== "company");
-
-  if (!entries.length) {
-    return "Порожня заявка";
-  }
-
-  return entries
-    .map(([key, value]) => `${key}: ${sanitize(value) || "Не вказано"}`)
-    .join("\n");
-};
-
-const getField = (payload, keys) => {
-  for (const key of keys) {
-    const value = sanitize(payload?.[key]);
-    if (value) {
-      return value;
-    }
-  }
-
-  return "";
-};
-
-const ratingToStars = (ratingValue) => {
-  const normalized = Number.parseInt(sanitize(ratingValue), 10);
-
-  if (!Number.isFinite(normalized) || normalized < 1) {
-    return "Не вказано";
-  }
-
-  return "⭐".repeat(Math.min(normalized, 5));
-};
-
-const buildBookingMessage = ({ name, phone, format }) =>
-  [
-    "⚡ НОВИЙ ЗАПИС: PowerPlace",
-    "━━━━━━━━━━━━━━",
-    `👤 Клієнт: ${sanitize(name) || "Не вказано"}`,
-    `📞 Телефон: ${sanitize(phone) || "Не вказано"}`,
-    `📅 Формат: ${sanitize(format) || "Не вказано"}`
-  ].join("\n");
-
-const buildReviewMessage = ({ name, rating, text }) =>
-  [
-    "⭐ НОВИЙ ВІДГУК: PowerPlace",
-    "━━━━━━━━━━━━━━",
-    `👤 Від: ${sanitize(name) || "Не вказано"}`,
-    `📊 Оцінка: ${ratingToStars(rating)}`,
-    `💬 Текст: ${sanitize(text) || "Не вказано"}`
-  ].join("\n");
+import {
+  buildBookingMessage,
+  buildGenericMessage,
+  buildReviewModerationMessage,
+  createPendingReview,
+  getField,
+  getTelegramConfig,
+  parseRequestBody,
+  sanitize,
+  sendJson,
+  sendTelegramRequest,
+  setCorsHeaders
+} from "./_lib/moderation.mjs";
 
 export default async function handler(request, response) {
   console.log("FUNCTION TRIGGERED");
@@ -112,17 +27,16 @@ export default async function handler(request, response) {
     return;
   }
 
-  const token = process.env.TELEGRAM_TOKEN;
-  const chatId = process.env.TELEGRAM_CHAT_ID;
+  let token = "";
+  let chatId = "";
 
-  if (!token || !chatId) {
-    console.log("Missing environment variables.", {
-      hasToken: Boolean(token),
-      hasChatId: Boolean(chatId)
-    });
+  try {
+    ({ token, chatId } = getTelegramConfig());
+  } catch (error) {
+    console.log("Missing environment variables.", error);
     sendJson(response, 500, {
       success: false,
-      message: "Missing environment variables"
+      message: "Missing environment variables."
     });
     return;
   }
@@ -152,63 +66,69 @@ export default async function handler(request, response) {
     return;
   }
 
-  let text = "";
+  let telegramPayload = null;
 
   if (formType === "booking") {
     const name = getField(payload, ["name", "Ім'я"]);
     const phone = getField(payload, ["phone", "Телефон"]);
     const format = getField(payload, ["format", "Послуга", "Формат"]);
-
-    if (!name && !phone && !format) {
-      text = "Порожня заявка";
-    } else {
-      text = buildBookingMessage({ name, phone, format });
-    }
+    const text = !name && !phone && !format ? "Порожня заявка" : buildBookingMessage({ name, phone, format });
+    telegramPayload = { chat_id: chatId, text };
   } else if (formType === "review") {
     const name = getField(payload, ["name", "Ім'я"]);
     const rating = getField(payload, ["rating", "Оцінка"]);
     const reviewText = getField(payload, ["text", "Текст_відгуку", "Текст"]);
 
     if (!name && !reviewText && !rating) {
-      text = "Порожня заявка";
+      telegramPayload = {
+        chat_id: chatId,
+        text: "Порожня заявка"
+      };
     } else {
-      text = buildReviewMessage({ name, rating, text: reviewText });
+      let reviewRecord;
+
+      try {
+        reviewRecord = await createPendingReview({ name, rating, text: reviewText });
+      } catch (error) {
+        console.log("Supabase insert error:", error);
+        sendJson(response, 500, {
+          success: false,
+          message: "Не вдалося зберегти відгук для модерації."
+        });
+        return;
+      }
+
+      telegramPayload = {
+        chat_id: chatId,
+        text: buildReviewModerationMessage({
+          id: reviewRecord.id,
+          name: reviewRecord.name,
+          rating: reviewRecord.rating,
+          text: reviewRecord.text
+        }),
+        reply_markup: {
+          inline_keyboard: [
+            [
+              { text: "✅ Одобрити", callback_data: `approve_${reviewRecord.id}` },
+              { text: "❌ Видалити", callback_data: `delete_${reviewRecord.id}` }
+            ]
+          ]
+        }
+      };
     }
   } else {
-    text = buildGenericMessage(payload);
-  }
-
-  if (!sanitize(text)) {
-    text = "Порожня заявка";
+    telegramPayload = {
+      chat_id: chatId,
+      text: buildGenericMessage(payload)
+    };
   }
 
   console.log("Token visible to server:", token ? `${token.slice(0, 10)}...` : "missing");
   console.log("Chat ID visible to server:", chatId || "missing");
-  console.log("Telegram text to send:", text);
+  console.log("Telegram text to send:", telegramPayload?.text || "missing");
 
   try {
-    const telegramResponse = await fetch(`${TELEGRAM_API_BASE}/bot${token}/sendMessage`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        chat_id: chatId,
-        text
-      })
-    });
-
-    const telegramResult = await telegramResponse.json();
-    console.log("Telegram status:", telegramResponse.status);
-    console.log("Telegram response:", telegramResult);
-
-    if (!telegramResponse.ok || !telegramResult.ok) {
-      sendJson(response, 502, {
-        success: false,
-        message: telegramResult.description || "Failed to send Telegram message."
-      });
-      return;
-    }
+    await sendTelegramRequest(token, "sendMessage", telegramPayload);
 
     sendJson(response, 200, {
       success: true
