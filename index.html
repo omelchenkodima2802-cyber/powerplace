@@ -1014,6 +1014,7 @@
       const cooldownTimers = new Map();
       let modalScrollPosition = 0;
       let modalAutoCloseTimer = 0;
+      let previousBodyOverflow = "";
 
       const clearModalAutoCloseTimer = () => {
         if (modalAutoCloseTimer) {
@@ -1024,11 +1025,14 @@
 
       const lockPageScrollForModal = () => {
         modalScrollPosition = window.scrollY;
+        previousBodyOverflow = document.body.style.overflow;
         document.body.classList.add("modal-open");
+        document.body.style.overflow = "hidden";
       };
 
       const unlockPageScrollForModal = () => {
         document.body.classList.remove("modal-open");
+        document.body.style.overflow = previousBodyOverflow;
         window.requestAnimationFrame(() => {
           window.scrollTo(0, modalScrollPosition);
         });

@@ -3035,12 +3035,13 @@ body.theme-modal-open {
     position: fixed;
     top: 50%;
     left: 50%;
-    width: 95%;
-    max-height: 90vh;
+    width: 90%;
+    max-height: 84vh;
     overflow-y: auto;
+    overscroll-behavior: contain;
     margin: 0;
-    padding: 18px 16px;
-    transform: translate(-50%, -48%) scale(0.98);
+    padding: 15px;
+    transform: translate(-50%, -50%) scale(0.98);
   }
 
   .team-modal {
@@ -3051,12 +3052,13 @@ body.theme-modal-open {
     position: fixed;
     top: 50%;
     left: 50%;
-    width: 95%;
-    max-height: 90vh;
+    width: 90%;
+    max-height: 84vh;
     overflow-y: auto;
+    overscroll-behavior: contain;
     margin: 0;
-    padding: 18px 16px;
-    transform: translate(-50%, -48%) scale(0.97);
+    padding: 15px;
+    transform: translate(-50%, -50%) scale(0.97);
   }
 
   .review-modal.is-open .review-modal-dialog,
@@ -3066,7 +3068,7 @@ body.theme-modal-open {
 
   .team-modal-content h2 {
     margin-top: 0;
-    font-size: 1.9rem;
+    font-size: 1.6rem;
   }
 
   .review-modal-close,
@@ -3095,18 +3097,18 @@ body.theme-modal-open {
   }
 
   .review-modal-header {
-    margin-bottom: 18px;
+    margin-bottom: 14px;
     padding-right: 48px;
   }
 
   .team-modal-content {
-    gap: 16px;
+    gap: 12px;
     padding-right: 48px;
   }
 
   .team-modal-section,
   .modal-results {
-    padding: 16px;
+    padding: 14px;
   }
 
   .modal-results .results-grid {
@@ -3123,7 +3125,48 @@ body.theme-modal-open {
 
   .form-grid {
     grid-template-columns: 1fr;
-    gap: 14px;
+    gap: 10px;
+  }
+
+  .form-field {
+    gap: 8px;
+  }
+
+  .form-field span,
+  .review-modal-header p,
+  .team-modal-section p,
+  .review-feedback {
+    font-size: 0.95rem;
+  }
+
+  .form-field input,
+  .form-field select {
+    min-height: 46px;
+    padding: 0 14px;
+    font-size: 16px;
+  }
+
+  .review-form textarea {
+    min-height: 96px;
+    padding: 12px 14px;
+    font-size: 16px;
+  }
+
+  .rating-stars {
+    gap: 6px;
+  }
+
+  .rating-stars label {
+    width: 38px;
+    height: 38px;
+  }
+
+  .rating-stars label i {
+    font-size: 1rem;
+  }
+
+  .review-form-actions {
+    margin-top: 6px;
   }
 
   .booking-actions {
