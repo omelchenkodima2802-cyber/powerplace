@@ -1057,7 +1057,7 @@
 
       const createReviewCard = (review) => {
         const article = document.createElement("article");
-        article.className = "review-card is-visible";
+        article.className = "review-card reveal is-visible";
 
         const quote = document.createElement("div");
         quote.className = "review-quote";
@@ -1066,14 +1066,25 @@
         const text = document.createElement("p");
         text.textContent = String(review?.text || "").trim();
 
-        const author = document.createElement("strong");
-        const normalizedRating = Number.parseInt(String(review?.rating || ""), 10);
-        const stars = Number.isFinite(normalizedRating) && normalizedRating > 0
-          ? ` · ${"⭐".repeat(Math.min(normalizedRating, 5))}`
-          : "";
-        author.textContent = `${String(review?.name || "Гість PowerPlace").trim() || "Гість PowerPlace"}${stars}`;
+        const footer = document.createElement("div");
+        footer.className = "review-card-footer";
 
-        article.append(quote, text, author);
+        const author = document.createElement("strong");
+        author.className = "review-author";
+        const normalizedRating = Number.parseInt(String(review?.rating || ""), 10);
+        author.textContent = String(review?.name || "Гість PowerPlace").trim() || "Гість PowerPlace";
+
+        footer.appendChild(author);
+
+        if (Number.isFinite(normalizedRating) && normalizedRating > 0) {
+          const rating = document.createElement("div");
+          rating.className = "review-rating";
+          rating.setAttribute("aria-label", `Оцінка ${Math.min(normalizedRating, 5)} з 5`);
+          rating.textContent = "★".repeat(Math.min(normalizedRating, 5));
+          footer.appendChild(rating);
+        }
+
+        article.append(quote, text, footer);
         return article;
       };
 
@@ -1084,6 +1095,7 @@
 
         const items = Array.isArray(reviews) && reviews.length ? reviews : fallbackReviews;
         reviewsGrid.innerHTML = "";
+        reviewsGrid.classList.toggle("has-single-review", items.length === 1);
 
         items.forEach((review) => {
           reviewsGrid.appendChild(createReviewCard(review));

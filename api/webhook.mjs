@@ -8,14 +8,26 @@ import {
   sendTelegramRequest
 } from "./_lib/moderation.mjs";
 
-const CALLBACK_PATTERN = /^(approve|delete)_(.+)$/;
+const parseCallbackData = (value) => {
+  const normalized = sanitize(value);
+  const separatorIndex = normalized.indexOf("_");
+
+  if (separatorIndex <= 0 || separatorIndex === normalized.length - 1) {
+    return null;
+  }
+
+  return {
+    action: normalized.slice(0, separatorIndex),
+    reviewId: normalized.slice(separatorIndex + 1)
+  };
+};
 
 const buildResultMessage = (action, review) => {
   if (action === "approve") {
-    return `✅ Відгук опубліковано на сайті!\n\n👤 ${sanitize(review?.name) || "Користувач"}`;
+    return `✅ Відгук схвалено та опубліковано!\n\n👤 ${sanitize(review?.name) || "Користувач"}`;
   }
 
-  return `🗑️ Відгук видалено.\n\n👤 ${sanitize(review?.name) || "Користувач"}`;
+  return `❌ Видалено\n\n👤 ${sanitize(review?.name) || "Користувач"}`;
 };
 
 export default async function handler(request, response) {
@@ -29,6 +41,9 @@ export default async function handler(request, response) {
     return;
   }
 
+  const data = parseRequestBody(request);
+  console.log("Callback received:", data);
+
   let token = "";
 
   try {
@@ -39,8 +54,8 @@ export default async function handler(request, response) {
     return;
   }
 
-  const payload = parseRequestBody(request);
-  const callbackQuery = payload?.callback_query;
+  const callbackQuery = data?.callback_query;
+  console.log("Callback query object:", callbackQuery);
 
   if (!callbackQuery) {
     sendJson(response, 200, { success: true, ignored: true });
@@ -48,9 +63,9 @@ export default async function handler(request, response) {
   }
 
   const callbackData = sanitize(callbackQuery.data);
-  const match = callbackData.match(CALLBACK_PATTERN);
+  const parsedCallback = parseCallbackData(callbackData);
 
-  if (!match) {
+  if (!parsedCallback || !["approve", "delete"].includes(parsedCallback.action)) {
     await sendTelegramRequest(token, "answerCallbackQuery", {
       callback_query_id: callbackQuery.id,
       text: "Невідома дія.",
@@ -60,14 +75,40 @@ export default async function handler(request, response) {
     return;
   }
 
-  const [, action, reviewId] = match;
+  const { action, reviewId } = parsedCallback;
   const message = callbackQuery.message;
 
+  console.log("Parsed callback action:", action);
+  console.log("Parsed callback review ID:", reviewId);
+
   try {
-    const review =
+    const mutationResult =
       action === "approve"
         ? await approveReviewById(reviewId)
         : await deleteReviewById(reviewId);
+
+    const { data: review, error, status } = mutationResult || {};
+
+    if (status && (status < 200 || status > 204)) {
+      console.log("Supabase mutation returned unexpected status:", status, {
+        action,
+        reviewId,
+        error
+      });
+    }
+
+    if (error) {
+      console.log("Supabase mutation error:", {
+        action,
+        reviewId,
+        status,
+        message: error.message,
+        details: error.details,
+        hint: error.hint,
+        code: error.code
+      });
+      throw error;
+    }
 
     if (!review) {
       await sendTelegramRequest(token, "answerCallbackQuery", {
@@ -81,7 +122,7 @@ export default async function handler(request, response) {
 
     await sendTelegramRequest(token, "answerCallbackQuery", {
       callback_query_id: callbackQuery.id,
-      text: action === "approve" ? "Відгук опубліковано." : "Відгук видалено.",
+      text: action === "approve" ? "✅ Схвалено" : "❌ Видалено",
       show_alert: false
     });
 
@@ -90,6 +131,12 @@ export default async function handler(request, response) {
         chat_id: message.chat.id,
         message_id: message.message_id,
         text: buildResultMessage(action, review)
+      });
+      console.log("Telegram message updated after moderation:", {
+        action,
+        reviewId,
+        chatId: message.chat.id,
+        messageId: message.message_id
       });
     }
 

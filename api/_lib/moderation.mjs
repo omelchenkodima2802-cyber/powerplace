@@ -173,34 +173,34 @@ export const getApprovedReviews = async () => {
 
 export const approveReviewById = async (reviewId) => {
   const supabase = getSupabaseAdminClient();
-  const { data, error } = await supabase
+  const { data, error, status } = await supabase
     .from(REVIEWS_TABLE)
     .update({ is_approved: true })
     .eq("id", reviewId)
     .select("id, name, rating, text, is_approved")
     .maybeSingle();
 
-  if (error) {
-    throw error;
-  }
-
-  return data;
+  return {
+    data,
+    error,
+    status
+  };
 };
 
 export const deleteReviewById = async (reviewId) => {
   const supabase = getSupabaseAdminClient();
-  const { data, error } = await supabase
+  const { data, error, status } = await supabase
     .from(REVIEWS_TABLE)
     .delete()
     .eq("id", reviewId)
     .select("id, name, rating, text")
     .maybeSingle();
 
-  if (error) {
-    throw error;
-  }
-
-  return data;
+  return {
+    data,
+    error,
+    status
+  };
 };
 
 export const sendTelegramRequest = async (token, method, payload) => {
