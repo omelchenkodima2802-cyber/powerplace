@@ -405,7 +405,7 @@
             <form
               class="booking-form"
               id="booking-form"
-              action="/.netlify/functions/send-telegram"
+            action="/api/send-telegram"
               method="POST"
               data-form-type="booking"
               novalidate
@@ -540,7 +540,7 @@
         <form
           class="review-form"
           id="review-form"
-          action="/.netlify/functions/send-telegram"
+          action="/api/send-telegram"
           method="POST"
           data-form-type="review"
           novalidate
@@ -1004,6 +1004,7 @@
 
       const hiddenResultsIds = new Set(["nastya-s", "nastya-h"]);
       const FORM_COOLDOWN_MS = 60000;
+      const FORM_MODAL_AUTOCLOSE_MS = 3000;
       const STORAGE_KEYS = {
         sessionId: "powerplace.session.id",
         bookingSessionMark: "powerplace.booking.session.mark",
@@ -1011,6 +1012,27 @@
         reviewCooldown: "powerplace.review.cooldown"
       };
       const cooldownTimers = new Map();
+      let modalScrollPosition = 0;
+      let modalAutoCloseTimer = 0;
+
+      const clearModalAutoCloseTimer = () => {
+        if (modalAutoCloseTimer) {
+          window.clearTimeout(modalAutoCloseTimer);
+          modalAutoCloseTimer = 0;
+        }
+      };
+
+      const lockPageScrollForModal = () => {
+        modalScrollPosition = window.scrollY;
+        document.body.classList.add("modal-open");
+      };
+
+      const unlockPageScrollForModal = () => {
+        document.body.classList.remove("modal-open");
+        window.requestAnimationFrame(() => {
+          window.scrollTo(0, modalScrollPosition);
+        });
+      };
 
       const getSessionId = () => {
         let sessionId = sessionStorage.getItem(STORAGE_KEYS.sessionId);
@@ -1105,21 +1127,42 @@
       };
 
       const openReviewModal = () => {
+        clearModalAutoCloseTimer();
         reviewModal?.classList.add("is-open");
         reviewModal?.setAttribute("aria-hidden", "false");
-        document.body.classList.add("modal-open");
+        lockPageScrollForModal();
       };
 
       const closeReviewModal = () => {
+        clearModalAutoCloseTimer();
         reviewModal?.classList.remove("is-open");
         reviewModal?.setAttribute("aria-hidden", "true");
-        document.body.classList.remove("modal-open");
+        unlockPageScrollForModal();
       };
 
       const closeTeamModal = () => {
+        clearModalAutoCloseTimer();
         teamModal?.classList.remove("is-open");
         teamModal?.setAttribute("aria-hidden", "true");
-        document.body.classList.remove("modal-open");
+        unlockPageScrollForModal();
+      };
+
+      const scheduleModalAutoClose = (form, delayMs = FORM_MODAL_AUTOCLOSE_MS) => {
+        const modalRoot = form.closest(".review-modal, .team-modal");
+
+        if (!modalRoot) {
+          return;
+        }
+
+        clearModalAutoCloseTimer();
+        modalAutoCloseTimer = window.setTimeout(() => {
+          if (modalRoot.classList.contains("review-modal")) {
+            closeReviewModal();
+          } else if (modalRoot.classList.contains("team-modal")) {
+            closeTeamModal();
+          }
+          modalAutoCloseTimer = 0;
+        }, delayMs);
       };
 
       const renderResultItem = (path, profileName, index) => {
@@ -1197,7 +1240,7 @@
 
         teamModal.classList.add("is-open");
         teamModal.setAttribute("aria-hidden", "false");
-        document.body.classList.add("modal-open");
+        lockPageScrollForModal();
       };
 
       const setTemporaryDisabled = (element, duration = BUTTON_THROTTLE_DURATION) => {
@@ -1478,7 +1521,7 @@
         feedbackElement.textContent = loadingText;
 
         try {
-          const endpoint = "/.netlify/functions/send-telegram";
+          const endpoint = "/api/send-telegram";
           const response = await fetch(endpoint, {
             method: form.method,
             headers: {
@@ -1496,6 +1539,7 @@
           form.reset();
           feedbackElement.textContent = successMessage;
           feedbackElement.classList.add("is-success");
+          scheduleModalAutoClose(form);
           return true;
         } catch (error) {
           feedbackElement.textContent = errorMessage;
@@ -1605,13 +1649,13 @@
       });
 
       reviewModal?.addEventListener("click", (event) => {
-        if (event.target === reviewModal) {
+        if (event.target === reviewModal || event.target.closest(".review-modal-backdrop")) {
           closeReviewModal();
         }
       });
 
       teamModal?.addEventListener("click", (event) => {
-        if (event.target === teamModal) {
+        if (event.target === teamModal || event.target.closest(".team-modal-backdrop")) {
           closeTeamModal();
         }
       });

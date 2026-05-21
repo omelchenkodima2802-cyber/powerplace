@@ -1,28 +1,27 @@
 const TELEGRAM_API_BASE = "https://api.telegram.org";
 
-const jsonResponse = (statusCode, body) => ({
-  statusCode,
-  headers: {
-    "Content-Type": "application/json"
-  },
-  body: JSON.stringify(body)
-});
+const setCorsHeaders = (response) => {
+  response.setHeader("Access-Control-Allow-Origin", "*");
+  response.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  response.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
+};
+
+const sendJson = (response, statusCode, body) => {
+  setCorsHeaders(response);
+  response.status(statusCode).json(body);
+};
 
 const sanitize = (value) => String(value || "").trim();
 
-const parseEventBody = (event) => {
-  const rawBody = event.body;
-  const contentType = sanitize(event.headers?.["content-type"] || event.headers?.["Content-Type"]).toLowerCase();
+const parseRequestBody = (request) => {
+  const rawBody = request.body;
+  const contentType = sanitize(request.headers?.["content-type"] || request.headers?.["Content-Type"]).toLowerCase();
 
   console.log("Raw body received:", rawBody);
   console.log("Content-Type received:", contentType || "not provided");
 
   if (!rawBody) {
     return {};
-  }
-
-  if (typeof rawBody === "object") {
-    return rawBody;
   }
 
   if (typeof rawBody === "string") {
@@ -38,6 +37,10 @@ const parseEventBody = (event) => {
 
     const params = new URLSearchParams(trimmed);
     return Object.fromEntries(params.entries());
+  }
+
+  if (typeof rawBody === "object") {
+    return rawBody;
   }
 
   return {};
@@ -94,23 +97,19 @@ const buildReviewMessage = ({ name, rating, text }) =>
     `💬 Текст: ${sanitize(text) || "Не вказано"}`
   ].join("\n");
 
-exports.handler = async (event) => {
+export default async function handler(request, response) {
   console.log("FUNCTION TRIGGERED");
-  console.log("HTTP method:", event.httpMethod);
+  console.log("HTTP method:", request.method);
 
-  if (event.httpMethod === "OPTIONS") {
-    return {
-      statusCode: 204,
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Headers": "Content-Type",
-        "Access-Control-Allow-Methods": "POST, OPTIONS"
-      }
-    };
+  if (request.method === "OPTIONS") {
+    setCorsHeaders(response);
+    response.status(204).end();
+    return;
   }
 
-  if (event.httpMethod !== "POST") {
-    return jsonResponse(405, { success: false, message: "Method not allowed." });
+  if (request.method !== "POST") {
+    sendJson(response, 405, { success: false, message: "Method not allowed." });
+    return;
   }
 
   const token = process.env.TELEGRAM_TOKEN;
@@ -121,33 +120,36 @@ exports.handler = async (event) => {
       hasToken: Boolean(token),
       hasChatId: Boolean(chatId)
     });
-    return jsonResponse(500, {
+    sendJson(response, 500, {
       success: false,
       message: "Missing environment variables"
     });
+    return;
   }
 
   let payload;
 
   try {
-    payload = parseEventBody(event);
+    payload = parseRequestBody(request);
     console.log("Parsed payload:", payload);
   } catch (error) {
     console.log("Body parsing error:", error);
-    return jsonResponse(400, {
+    sendJson(response, 400, {
       success: false,
       message: "Invalid request body."
     });
+    return;
   }
 
   const formType = sanitize(payload.formType);
   const company = sanitize(payload.company);
 
   if (company) {
-    return jsonResponse(400, {
+    sendJson(response, 400, {
       success: false,
       message: "Request rejected by honeypot."
     });
+    return;
   }
 
   let text = "";
@@ -185,39 +187,37 @@ exports.handler = async (event) => {
   console.log("Telegram text to send:", text);
 
   try {
-    const telegramResponse = await fetch(
-      `${TELEGRAM_API_BASE}/bot${token}/sendMessage`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          chat_id: chatId,
-          text
-        })
-      }
-    );
+    const telegramResponse = await fetch(`${TELEGRAM_API_BASE}/bot${token}/sendMessage`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        chat_id: chatId,
+        text
+      })
+    });
 
     const telegramResult = await telegramResponse.json();
     console.log("Telegram status:", telegramResponse.status);
     console.log("Telegram response:", telegramResult);
 
     if (!telegramResponse.ok || !telegramResult.ok) {
-      return jsonResponse(502, {
+      sendJson(response, 502, {
         success: false,
         message: telegramResult.description || "Failed to send Telegram message."
       });
+      return;
     }
 
-    return jsonResponse(200, {
+    sendJson(response, 200, {
       success: true
     });
   } catch (error) {
     console.log("Telegram request error:", error);
-    return jsonResponse(500, {
+    sendJson(response, 500, {
       success: false,
       message: "Internal server error."
     });
   }
-};
+}
