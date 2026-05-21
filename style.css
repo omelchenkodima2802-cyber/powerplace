@@ -3038,7 +3038,10 @@ body.theme-modal-open {
     width: 90%;
     max-height: 84vh;
     overflow-y: auto;
+    overflow-x: hidden;
     overscroll-behavior: contain;
+    overscroll-behavior-x: none;
+    touch-action: pan-y;
     margin: 0;
     padding: 15px;
     transform: translate(-50%, -50%) scale(0.98);
@@ -3055,7 +3058,10 @@ body.theme-modal-open {
     width: 90%;
     max-height: 84vh;
     overflow-y: auto;
+    overflow-x: hidden;
     overscroll-behavior: contain;
+    overscroll-behavior-x: none;
+    touch-action: pan-y;
     margin: 0;
     padding: 15px;
     transform: translate(-50%, -50%) scale(0.97);
