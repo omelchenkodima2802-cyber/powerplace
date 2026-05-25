@@ -8,14 +8,14 @@ document.addEventListener("DOMContentLoaded", () => {
   const themeAccessFeedback = document.querySelector("#theme-access-feedback");
   const themeAdminPanel = document.querySelector("#theme-admin-panel");
   const themeOptionButtons = document.querySelectorAll(".theme-option-button");
+  const themeSubmitButton = themeAccessForm?.querySelector(".theme-submit-button");
 
   if (!themeAdminModal || !themeAccessForm || !themeAdminPanel) {
     return;
   }
 
   const THEME_STORAGE_KEY = "powerplace-theme";
-  const ADMIN_THEME_PASSWORD = "power2024";
-  let isThemeAdminAuthorized = false;
+  let hasSettingsAccess = false;
   const THEMES = {
     default: { className: "", effect: null, symbols: [] },
     valentines: {
@@ -116,7 +116,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const applyTheme = (themeName, options = {}) => {
     const { persist = true, force = false } = options;
-    if (!force && !isThemeAdminAuthorized) {
+    if (!force && !hasSettingsAccess) {
       return false;
     }
 
@@ -142,17 +142,31 @@ document.addEventListener("DOMContentLoaded", () => {
     return true;
   };
 
-  const openThemeAdminModal = () => {
+  const verifySettingsAccess = async (passwordValue) => {
+    const response = await fetch("/api/check-password", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ password: passwordValue })
+    });
+
+    const result = await response.json().catch(() => ({}));
+    return response.ok && result.success === true;
+  };
+
+  const initSpecialSettings = () => {
     if (themeAccessFeedback) {
       themeAccessFeedback.textContent = "";
       themeAccessFeedback.classList.remove("is-error", "is-success");
     }
 
-    updateThemeAdminAccess(isThemeAdminAuthorized);
+    updateThemeAdminAccess(hasSettingsAccess);
     setThemeModalState(true);
 
     window.setTimeout(() => {
-      if (isThemeAdminAuthorized) {
+      if (hasSettingsAccess) {
         themeAdminPanel.querySelector(".theme-option-button.is-active")?.focus();
       } else {
         themeAdminPassword?.focus();
@@ -166,7 +180,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   themeAdminOpenButtons.forEach((button) => {
     button.addEventListener("click", () => {
-      openThemeAdminModal();
+      initSpecialSettings();
     });
   });
 
@@ -188,7 +202,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  themeAccessForm.addEventListener("submit", (event) => {
+  themeAccessForm.addEventListener("submit", async (event) => {
     event.preventDefault();
 
     const passwordValue = themeAdminPassword?.value.trim() || "";
@@ -198,19 +212,46 @@ document.addEventListener("DOMContentLoaded", () => {
       themeAccessFeedback.classList.remove("is-error", "is-success");
     }
 
-    if (passwordValue !== ADMIN_THEME_PASSWORD) {
+    if (!passwordValue) {
       if (themeAccessFeedback) {
-        themeAccessFeedback.textContent = "Невірний пароль";
+        themeAccessFeedback.textContent = "Доступ заборонено";
         themeAccessFeedback.classList.add("is-error");
       }
-      isThemeAdminAuthorized = false;
+      hasSettingsAccess = false;
+      updateThemeAdminAccess(false);
+      themeAdminPassword?.focus();
+      return;
+    }
+
+    if (themeSubmitButton) {
+      themeSubmitButton.disabled = true;
+    }
+
+    let accessGranted = false;
+
+    try {
+      accessGranted = await verifySettingsAccess(passwordValue);
+    } catch {
+      accessGranted = false;
+    } finally {
+      if (themeSubmitButton) {
+        themeSubmitButton.disabled = false;
+      }
+    }
+
+    if (!accessGranted) {
+      if (themeAccessFeedback) {
+        themeAccessFeedback.textContent = "Доступ заборонено";
+        themeAccessFeedback.classList.add("is-error");
+      }
+      hasSettingsAccess = false;
       updateThemeAdminAccess(false);
       themeAdminPassword?.focus();
       themeAdminPassword?.select();
       return;
     }
 
-    isThemeAdminAuthorized = true;
+    hasSettingsAccess = true;
     updateThemeAdminAccess(true);
 
     if (themeAccessFeedback) {
@@ -223,7 +264,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   themeOptionButtons.forEach((button) => {
     button.addEventListener("click", () => {
-      if (!isThemeAdminAuthorized) {
+      if (!hasSettingsAccess) {
         return;
       }
 

@@ -1,4 +1,4 @@
-:root {
+:root { 
   --bg: #0a0a0b;
   --bg-soft: #0f0f10;
   --panel: rgba(19, 22, 28, 0.64);
@@ -57,6 +57,8 @@
 
 html {
   scroll-behavior: smooth;
+  overflow-x: hidden;
+  max-width: 100%;
 }
 
 body {
@@ -381,6 +383,9 @@ ul {
   top: 65px;
   left: 51%;
   width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  padding-inline: 12px;
   transform: translateX(-50%) scale(0.94);
   text-align: center;
   white-space: nowrap;
@@ -1315,6 +1320,29 @@ ul {
   justify-content: center;
 }
 
+.reviews-actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 28px;
+}
+
+.reviews-load-more {
+  min-height: 54px;
+  padding: 0 30px;
+  border-color: rgba(var(--accent-rgb), 0.5);
+  background: linear-gradient(135deg, rgba(15, 125, 255, 0.18), rgba(57, 180, 255, 0.12));
+  color: #ffffff;
+  box-shadow:
+    0 16px 38px rgba(0, 123, 255, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.reviews-load-more:hover,
+.reviews-load-more:focus-visible {
+  background: linear-gradient(135deg, rgba(35, 144, 255, 0.3), rgba(88, 195, 255, 0.18));
+  color: #ffffff;
+}
+
 .review-open-button {
   margin-top: 22px;
   min-height: 56px;
@@ -1406,6 +1434,10 @@ ul {
   gap: 8px;
 }
 
+.review-card-enter {
+  animation: reviewCardFadeIn 0.45s ease both;
+}
+
 .review-author {
   font-weight: 700;
   letter-spacing: 0.01em;
@@ -1418,6 +1450,18 @@ ul {
   color: #ffd86b;
   font-size: 1rem;
   line-height: 1;
+}
+
+@keyframes reviewCardFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .review-modal {
@@ -2983,7 +3027,8 @@ body.theme-modal-open {
 
 @media (max-width: 560px) {
   .hero-bg-title {
-    font-size: 44px;
+    font-size: clamp(26px, 10vw, 44px);
+    letter-spacing: 0.06em;
     top: 40px;
   }
 
@@ -3167,11 +3212,40 @@ body.theme-modal-open {
   }
 
   .theme-admin-modal {
-    padding: 14px;
+    padding: 0;
   }
 
   .theme-admin-dialog {
-    padding: 24px;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 90%;
+    max-height: 84vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    overscroll-behavior: contain;
+    overscroll-behavior-x: none;
+    touch-action: pan-y;
+    margin: 0;
+    padding: 24px 15px;
+    transform: translate(-50%, -50%) scale(0.98);
+  }
+
+  .theme-admin-modal.is-open .theme-admin-dialog {
+    transform: translate(-50%, -50%) scale(1);
+  }
+
+  .theme-admin-dialog > *,
+  .theme-options-grid,
+  .theme-option-button,
+  .theme-access-form,
+  .theme-access-form .form-field {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .theme-admin-header {
+    padding-right: 48px;
   }
 
   .form-grid {
@@ -3238,8 +3312,10 @@ body.theme-modal-open {
   .booking-actions .button,
   .booking-actions .booking-submit {
     width: 100%;
-    min-width: 100%;
+    min-width: 0;
+    max-width: 100%;
     flex-basis: 100%;
+    box-sizing: border-box;
   }
 
   .rating-stars {
@@ -3261,8 +3337,19 @@ body.theme-modal-open {
     flex-direction: column;
   }
 
+  .site-header,
+  .site-header .header-inner,
+  .nav {
+    max-width: 100%;
+  }
+
   .site-header .logo {
-    max-width: 200px;
+    max-width: min(200px, 100%);
+  }
+
+  .map-card,
+  .map-card iframe {
+    max-width: 100%;
   }
 
   .section-heading h2 {
