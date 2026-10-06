@@ -25,6 +25,7 @@
   >
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link rel="icon" href="images/logo.png" type="image/png">
+  <link rel="preload" as="image" href="images/logo.png" fetchpriority="high">
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="themes.css">
 </head>
@@ -32,7 +33,7 @@
   <header class="site-header">
     <div class="container header-inner">
       <a class="logo" href="#hero" aria-label="Power Place">
-        <img src="images/logo.png" alt="Логотип PowerPlace" loading="lazy" width="160" height="48">
+        <img src="images/logo.png" alt="Логотип PowerPlace" loading="eager" fetchpriority="high" decoding="async" width="160" height="48">
       </a>
       <nav class="nav">
         <a href="#about">Про нас</a>

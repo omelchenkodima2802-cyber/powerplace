@@ -329,6 +329,18 @@ ul {
     0 0 24px rgba(73, 167, 255, 0.2);
 }
 
+.legal-actions {
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: 28px;
+}
+
+.legal-back-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
 .hero {
   position: relative;
   overflow: hidden;
