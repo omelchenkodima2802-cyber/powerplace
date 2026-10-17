@@ -560,6 +560,10 @@ ul {
   margin: 36px 0 42px;
 }
 
+.hero-actions .button-primary {
+  color: #111111;
+}
+
 .hero-metrics {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -3485,48 +3489,94 @@ body.theme-modal-open {
     left: 0;
     right: 0;
     bottom: 0;
-    z-index: 101;
+    z-index: 109;
     display: flex;
     flex-direction: column;
     align-items: stretch;
     justify-content: flex-start;
+    align-content: stretch;
+    flex: none;
+    order: initial;
+    width: auto;
+    min-width: 100%;
+    max-width: none;
+    height: auto;
+    max-height: none;
+    flex-wrap: nowrap;
     gap: 0;
-    padding: 8px 20px calc(24px + env(safe-area-inset-bottom));
+    padding: 16px 20px calc(24px + env(safe-area-inset-bottom));
     background: #0a0a0e;
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
-    transform: translateY(-12px);
+    transform: translateY(-120%);
     transition: transform 0.3s ease, opacity 0.3s ease, visibility 0.3s ease;
     overflow-y: auto;
+    overflow-x: hidden;
+    white-space: normal;
   }
 
-  .site-header.is-menu-open .nav {
+  .site-header.is-menu-open .nav,
+  .nav.open {
     opacity: 1;
     visibility: visible;
     pointer-events: auto;
-    transform: translateY(0);
+    transform: none;
   }
 
   .nav a {
     display: block;
     width: 100%;
-    padding: 18px 0;
+    padding: 18px 4px;
     font-size: 20px;
     line-height: 1.2;
     color: var(--text);
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    white-space: normal;
   }
 
   .nav a:first-child {
     border-top: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .nav-mobile-cta {
+    display: inline-flex;
+    width: 100%;
+    margin-top: 18px;
+    color: #111111;
+    border-top: 0;
+  }
+
+  .hero {
+    padding-top: 36px;
+    padding-bottom: 56px;
+    min-height: auto;
+    align-items: flex-start;
+  }
+
+  .hero-grid {
+    gap: 28px;
+    align-items: flex-start;
+  }
+
+  .hero-content {
+    padding-top: 0;
+  }
+
+  .hero-content .eyebrow {
+    margin-bottom: 18px;
+  }
+
+  .hero-actions {
+    margin: 28px 0 34px;
   }
 }
 
 @media (min-width: 901px) {
   .header-mobile-actions,
   .header-burger,
-  .header-call-button {
+  .header-call-button,
+  .nav-mobile-cta {
     display: none !important;
   }
 }

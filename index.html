@@ -44,6 +44,7 @@
         <a href="#faq">FAQ</a>
         <a href="#pricing">Ціни</a>
         <a href="#contacts">Контакти</a>
+        <a class="nav-mobile-cta button button-primary" href="#booking">Записатися</a>
       </nav>
       <a class="button button-outline header-cta" href="#booking">Записатися</a>
       <div class="header-mobile-actions">
@@ -1066,6 +1067,7 @@
         }
 
         header.classList.remove("is-menu-open");
+        headerNav?.classList.remove("open");
         headerBurger.setAttribute("aria-expanded", "false");
         headerBurger.setAttribute("aria-label", "Відкрити меню");
         headerNav?.setAttribute("aria-hidden", "true");
@@ -1083,6 +1085,7 @@
 
         mobileMenuPreviousBodyOverflow = document.body.style.overflow;
         header.classList.add("is-menu-open");
+        headerNav?.classList.add("open");
         headerBurger.setAttribute("aria-expanded", "true");
         headerBurger.setAttribute("aria-label", "Закрити меню");
         headerNav?.setAttribute("aria-hidden", "false");
