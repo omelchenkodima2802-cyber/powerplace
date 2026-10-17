@@ -2,7 +2,7 @@
 <html lang="uk">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>PowerPlace | Тренажерний зал та Масаж у Вінниці</title>
   <meta
     name="description"
@@ -31,7 +31,10 @@
 <body>
   <header class="site-header">
     <div class="container header-inner">
-      <nav class="nav">
+      <a class="logo header-logo" href="#hero" aria-label="POWER PLACE">
+        <span>POWER PLACE</span>
+      </a>
+      <nav class="nav" id="site-nav">
         <a href="#about">Про нас</a>
         <a href="#services">Послуги</a>
         <a href="#team">Команда</a>
@@ -43,6 +46,21 @@
         <a href="#contacts">Контакти</a>
       </nav>
       <a class="button button-outline header-cta" href="#booking">Записатися</a>
+      <div class="header-mobile-actions">
+        <a class="header-call-button" href="tel:+380688868880" aria-label="Зателефонувати до POWER PLACE">
+          <i class="fa-solid fa-phone" aria-hidden="true"></i>
+        </a>
+        <button
+          class="header-burger"
+          type="button"
+          aria-label="Відкрити меню"
+          aria-controls="site-nav"
+          aria-expanded="false"
+        >
+          <span></span>
+          <span></span>
+        </button>
+      </div>
     </div>
   </header>
 
@@ -962,6 +980,9 @@
       const teamGroups = document.querySelectorAll("[data-team-group]");
       const teamCards = document.querySelectorAll(".team-card");
       const header = document.querySelector(".site-header");
+      const headerBurger = document.querySelector(".header-burger");
+      const headerNav = document.querySelector("#site-nav");
+      const headerNavLinks = document.querySelectorAll("#site-nav a");
       const backToTopButton = document.querySelector(".back-to-top");
       const bookingForm = document.getElementById("booking-form");
       const bookingPhone = document.querySelector("#booking-phone");
@@ -1005,6 +1026,7 @@
       let modalScrollPosition = 0;
       let modalAutoCloseTimer = 0;
       let previousBodyOverflow = "";
+      let mobileMenuPreviousBodyOverflow = "";
       let approvedReviews = [];
       let visibleReviewsCount = 0;
       const REVIEWS_PAGE_SIZE = 6;
@@ -1034,6 +1056,50 @@
         window.requestAnimationFrame(() => {
           window.scrollTo(0, modalScrollPosition);
         });
+      };
+
+      const isMobileHeader = () => window.innerWidth <= 900;
+
+      const closeMobileMenu = () => {
+        if (!header || !headerBurger) {
+          return;
+        }
+
+        header.classList.remove("is-menu-open");
+        headerBurger.setAttribute("aria-expanded", "false");
+        headerBurger.setAttribute("aria-label", "Відкрити меню");
+        headerNav?.setAttribute("aria-hidden", "true");
+
+        if (document.body.classList.contains("mobile-menu-open")) {
+          document.body.classList.remove("mobile-menu-open");
+          document.body.style.overflow = mobileMenuPreviousBodyOverflow;
+        }
+      };
+
+      const openMobileMenu = () => {
+        if (!header || !headerBurger) {
+          return;
+        }
+
+        mobileMenuPreviousBodyOverflow = document.body.style.overflow;
+        header.classList.add("is-menu-open");
+        headerBurger.setAttribute("aria-expanded", "true");
+        headerBurger.setAttribute("aria-label", "Закрити меню");
+        headerNav?.setAttribute("aria-hidden", "false");
+        document.body.classList.add("mobile-menu-open");
+        document.body.style.overflow = "hidden";
+      };
+
+      const toggleMobileMenu = () => {
+        if (!isMobileHeader()) {
+          return;
+        }
+
+        if (header?.classList.contains("is-menu-open")) {
+          closeMobileMenu();
+        } else {
+          openMobileMenu();
+        }
       };
 
       const getSessionId = () => {
@@ -1825,6 +1891,35 @@
       reviewsLoadMoreButton?.addEventListener("click", () => {
         renderApprovedReviewsBatch({ append: true });
       });
+
+      headerBurger?.addEventListener("click", () => {
+        toggleMobileMenu();
+      });
+
+      headerNavLinks.forEach((link) => {
+        link.addEventListener("click", () => {
+          closeMobileMenu();
+        });
+      });
+
+      window.addEventListener("resize", () => {
+        if (!isMobileHeader()) {
+          closeMobileMenu();
+          headerNav?.removeAttribute("aria-hidden");
+        } else if (!header?.classList.contains("is-menu-open")) {
+          headerNav?.setAttribute("aria-hidden", "true");
+        }
+      });
+
+      window.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") {
+          closeMobileMenu();
+        }
+      });
+
+      if (isMobileHeader()) {
+        headerNav?.setAttribute("aria-hidden", "true");
+      }
     });
   </script>
   <script src="admin.js"></script>
