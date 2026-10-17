@@ -154,25 +154,40 @@ ul {
   position: sticky;
   top: 0;
   z-index: 100;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  background: rgba(15, 15, 16, 0.94);
-  border-bottom: 1px solid var(--white-soft);
+  isolation: isolate;
+  background: transparent;
+  border-bottom: 0;
   transition: all 0.4s ease;
 }
 
+.site-header::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: rgba(15, 15, 16, 0.94);
+  border-bottom: 1px solid var(--white-soft);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  pointer-events: none;
+}
+
 .site-header.is-scrolled {
-  background: rgba(15, 15, 16, 0.98);
-  border-bottom-color: var(--glass-border);
   box-shadow: 0 16px 40px rgba(0, 0, 0, 0.28);
 }
 
+.site-header.is-scrolled::before {
+  background: rgba(15, 15, 16, 0.98);
+  border-bottom-color: var(--glass-border);
+}
+
 .site-header.header-shrunk {
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.34);
+}
+
+.site-header.header-shrunk::before {
   background: rgba(10, 10, 11, 0.95);
   border-bottom-color: var(--glass-border);
-  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.34);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
 }
 
 .header-inner {
@@ -3439,18 +3454,22 @@ body.theme-modal-open {
     --mobile-header-offset: calc(64px + max(12px, env(safe-area-inset-top)));
     top: 0;
     padding-top: max(12px, env(safe-area-inset-top));
-    background: rgba(10, 10, 14, 0.85);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    background: transparent;
+    border-bottom: 0;
   }
 
   .site-header.is-scrolled,
   .site-header.header-shrunk,
   .site-header.is-menu-open {
-    background: rgba(10, 10, 14, 0.85);
-    border-bottom-color: rgba(255, 255, 255, 0.08);
     box-shadow: 0 12px 32px rgba(0, 0, 0, 0.24);
+  }
+
+  .site-header::before,
+  .site-header.is-scrolled::before,
+  .site-header.header-shrunk::before,
+  .site-header.is-menu-open::before {
+    background: rgba(10, 10, 14, 0.85);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
   }
@@ -3488,8 +3507,8 @@ body.theme-modal-open {
     top: var(--mobile-header-offset);
     left: 0;
     right: 0;
-    bottom: 0;
-    z-index: 109;
+    height: calc(100dvh - var(--mobile-header-offset));
+    z-index: 99;
     display: flex;
     flex-direction: column;
     align-items: stretch;
@@ -3500,11 +3519,9 @@ body.theme-modal-open {
     width: auto;
     min-width: 100%;
     max-width: none;
-    height: auto;
-    max-height: none;
     flex-wrap: nowrap;
     gap: 0;
-    padding: 16px 20px calc(24px + env(safe-area-inset-bottom));
+    padding: 16px 20px 32px;
     background: #0a0a0e;
     opacity: 0;
     visibility: hidden;
@@ -3513,6 +3530,7 @@ body.theme-modal-open {
     transition: transform 0.3s ease, opacity 0.3s ease, visibility 0.3s ease;
     overflow-y: auto;
     overflow-x: hidden;
+    overscroll-behavior: contain;
     white-space: normal;
   }
 
