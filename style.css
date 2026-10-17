@@ -358,7 +358,7 @@ ul {
   background:
     linear-gradient(90deg, rgba(5, 7, 11, 0.88) 0%, rgba(5, 7, 11, 0.76) 44%, rgba(5, 7, 11, 0.88) 100%),
     linear-gradient(180deg, rgba(2, 5, 10, 0.56) 0%, rgba(2, 5, 10, 0.76) 100%),
-    url("https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=1600&q=80") center/cover no-repeat;
+    url("images/logo.webp") center/contain no-repeat;
   transform: scale(1.02);
   z-index: 0;
 }
