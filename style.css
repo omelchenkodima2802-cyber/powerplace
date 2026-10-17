@@ -360,9 +360,9 @@ ul {
     linear-gradient(180deg, rgba(2, 5, 10, 0.56) 0%, rgba(2, 5, 10, 0.76) 100%),
     url("images/logo.webp");
   background-repeat: no-repeat, no-repeat, no-repeat;
-  background-position: center, center, center 56%;
-  background-size: cover, cover, clamp(420px, 54vw, 760px);
-  transform: scale(1.02);
+  background-position: center, center, center;
+  background-size: cover, cover, cover;
+  transform: scale(1.08);
   z-index: 0;
 }
 
@@ -2871,8 +2871,8 @@ body.theme-modal-open {
   }
 
   .hero::before {
-    background-position: center, center, center 54%;
-    background-size: cover, cover, clamp(360px, 62vw, 620px);
+    background-position: center, center, center;
+    background-size: cover, cover, cover;
     transform: none;
   }
 
@@ -2966,8 +2966,8 @@ body.theme-modal-open {
   }
 
   .hero::before {
-    background-position: center, center, center 58%;
-    background-size: cover, cover, min(82vw, 460px);
+    background-position: center, center, center;
+    background-size: cover, cover, cover;
   }
 
   .results-grid {
@@ -2997,8 +2997,8 @@ body.theme-modal-open {
   }
 
   .hero::before {
-    background-position: center, center, center 57%;
-    background-size: cover, cover, min(88vw, 360px);
+    background-position: center, center, center;
+    background-size: cover, cover, cover;
   }
 
   .container {
