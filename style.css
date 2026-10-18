@@ -3569,12 +3569,19 @@ body.theme-modal-open {
     border-top: 1px solid rgba(255, 255, 255, 0.08);
   }
 
-  .nav-mobile-cta {
-    display: inline-flex;
+  .nav a.nav-mobile-cta {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     width: 100%;
-    margin-top: 18px;
+    padding: 18px 24px;
+    margin-top: 24px;
     color: #111111;
+    font-size: 18px;
+    font-weight: 700;
+    text-align: center;
     border-top: 0;
+    border-bottom: none;
   }
 
   .hero {
