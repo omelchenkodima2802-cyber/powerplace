@@ -110,6 +110,10 @@ img {
   display: block;
 }
 
+[hidden] {
+  display: none !important;
+}
+
 ul {
   list-style: none;
 }
@@ -1405,6 +1409,25 @@ ul {
   margin-top: 28px;
 }
 
+.reviews-empty-state {
+  display: grid;
+  gap: 16px;
+  justify-items: start;
+  padding: 28px;
+  margin-top: 12px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: rgba(var(--surface-rgb), 0.78);
+}
+
+.reviews-empty-state h3 {
+  font-size: 1.4rem;
+}
+
+.reviews-empty-state p {
+  color: var(--muted);
+}
+
 .reviews-load-more {
   min-height: 54px;
   padding: 0 30px;
@@ -2191,7 +2214,13 @@ body.theme-modal-open {
 }
 
 .honeypot-field {
-  display: none !important;
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
 }
 
 .form-grid {

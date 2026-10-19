@@ -15,8 +15,14 @@
     property="og:description"
     content="Сучасний фітнес-клуб PowerPlace у Вінниці: персональні тренування, професійний масаж, спорт-бар та реальні результати клієнтів. Записуйтесь онлайн!"
   >
-  <meta property="og:image" content="images/logo.png">
+  <meta property="og:url" content="https://powerplace.vn.ua/">
+  <meta property="og:site_name" content="Power Place">
+  <meta property="og:image" content="https://powerplace.vn.ua/images/og-image.jpg">
   <meta property="og:image:alt" content="PowerPlace — тренажерний зал та масаж у Вінниці">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="canonical" href="https://powerplace.vn.ua/">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
@@ -211,18 +217,18 @@
           </div>
           <div class="team-grid">
             <article class="team-card team-card-compact" data-role="trainer" data-id="olga-1" role="button" tabindex="0" aria-label="Детальніше про Числову Ольгу">
-              <div class="team-photo has-image"><img src="images/team/olga-1.jpg" alt="Тренер Числова Ольга" loading="lazy"></div>
+              <div class="team-photo has-image"><img src="images/team/olga-1.jpg" alt="Тренер Числова Ольга — профіль 1" loading="lazy"></div>
               <div class="team-info">
                 <h4>Числова Ольга</h4>
-                <p class="team-role">Тренер</p>
+                <p class="team-role">Тренер · профіль 1</p>
               </div>
               <div class="team-card-hover"><span>Детальніше</span><i class="fa-solid fa-plus" aria-hidden="true"></i></div>
             </article>
             <article class="team-card team-card-compact" data-role="trainer" data-id="olga-2" role="button" tabindex="0" aria-label="Детальніше про Числову Ольгу">
-              <div class="team-photo has-image"><img src="images/team/olga-2.jpg" alt="Тренер Числова Ольга" loading="lazy"></div>
+              <div class="team-photo has-image"><img src="images/team/olga-2.jpg" alt="Тренер Числова Ольга — профіль 2" loading="lazy"></div>
               <div class="team-info">
                 <h4>Числова Ольга</h4>
-                <p class="team-role">Тренер</p>
+                <p class="team-role">Тренер · профіль 2</p>
               </div>
               <div class="team-card-hover"><span>Детальніше</span><i class="fa-solid fa-plus" aria-hidden="true"></i></div>
             </article>
@@ -258,7 +264,8 @@
             <h3>Відновлення та спортивний супровід</h3>
           </div>
           <div class="team-grid team-grid-compact">
-            <article class="team-card team-card-compact" data-role="massage" data-id="roman" role="button" tabindex="0" aria-label="Детальніше про Кондратенка Романа">
+            <!-- TEMP-HIDDEN: убери hidden, когда будет реальное фото -->
+            <article class="team-card team-card-compact" data-role="massage" data-id="roman" data-visible="false" role="button" tabindex="0" aria-label="Детальніше про Кондратенка Романа" hidden>
               <div class="team-photo"><img src="images/logo.png" alt="Масажист Кондратенко Роман" loading="lazy"></div>
               <div class="team-info"><h4>Кондратенко Роман</h4><p class="team-role">Масажист, тренер</p></div>
               <div class="team-card-hover"><span>Детальніше</span><i class="fa-solid fa-plus" aria-hidden="true"></i></div>
@@ -419,7 +426,7 @@
             >
               <div class="honeypot-field" aria-hidden="true">
                 <label for="booking-company">Компанія</label>
-                <input type="text" id="booking-company" name="company" tabindex="-1" autocomplete="off">
+                <input type="text" id="booking-company" name="company" tabindex="-1" autocomplete="off" aria-hidden="true">
               </div>
 
               <div class="form-grid">
@@ -469,7 +476,7 @@
             <span class="eyebrow">Що далі</span>
             <h3>Швидке підтвердження без зайвих кроків</h3>
             <ul class="feature-list">
-              <li><i class="fa-solid fa-shield"></i> Захист від ботів через приховане honeypot-поле</li>
+              <li><i class="fa-solid fa-shield"></i> Підтвердимо запис протягом дня</li>
               <li><i class="fa-solid fa-phone-volume"></i> Передзвонюємо для уточнення часу та формату</li>
               <li><i class="fa-solid fa-clock"></i> Відповідаємо в робочі години клубу</li>
             </ul>
@@ -493,7 +500,8 @@
         </div>
 
         <div class="reviews-grid" id="reviews-grid">
-          <article class="review-card reveal">
+          <!-- TEMP-HIDDEN: заменить на реальные отзывы -->
+          <article class="review-card reveal" hidden>
             <div class="review-quote">
               <i class="fa-solid fa-quote-left" aria-hidden="true"></i>
             </div>
@@ -504,8 +512,8 @@
             </p>
             <strong>Марина, клієнтка клубу</strong>
           </article>
-
-          <article class="review-card reveal reveal-delay-1">
+          <!-- TEMP-HIDDEN: заменить на реальные отзывы -->
+          <article class="review-card reveal reveal-delay-1" hidden>
             <div class="review-quote">
               <i class="fa-solid fa-quote-left" aria-hidden="true"></i>
             </div>
@@ -516,8 +524,8 @@
             </p>
             <strong>Дмитро, постійний відвідувач</strong>
           </article>
-
-          <article class="review-card reveal reveal-delay-2">
+          <!-- TEMP-HIDDEN: заменить на реальные отзывы -->
+          <article class="review-card reveal reveal-delay-2" hidden>
             <div class="review-quote">
               <i class="fa-solid fa-quote-left" aria-hidden="true"></i>
             </div>
@@ -527,6 +535,12 @@
             </p>
             <strong>Анастасія, клієнтка Power Place</strong>
           </article>
+        </div>
+        <div class="reviews-empty-state" id="reviews-empty-state" hidden>
+          <h3>Ваш відгук важливий</h3>
+          <p>Перші реальні відгуки скоро з'являться тут після модерації.</p>
+          <!-- TEMP-HIDDEN: добавь реальную Google Review ссылку и убери hidden -->
+          <a class="button button-primary" id="reviews-google-link" href="#" hidden rel="noreferrer" target="_blank">Залишити відгук на Google</a>
         </div>
 
         <div class="reviews-actions" id="reviews-actions" hidden>
@@ -560,7 +574,7 @@
         >
           <div class="honeypot-field" aria-hidden="true">
             <label for="review-company">Компанія</label>
-            <input type="text" id="review-company" name="company" tabindex="-1" autocomplete="off">
+            <input type="text" id="review-company" name="company" tabindex="-1" autocomplete="off" aria-hidden="true">
           </div>
 
           <div class="form-grid">
@@ -616,7 +630,8 @@
           <div class="team-modal-content">
             <span class="eyebrow" id="team-modal-role"></span>
             <h2 id="team-modal-name"></h2>
-            <section class="team-modal-section">
+            <!-- TEMP-HIDDEN: блок управляется из JS, верни отображение для профиля через aboutVisible:true -->
+            <section class="team-modal-section" id="team-modal-about">
               <h3>Про мене</h3>
               <p id="team-modal-description"></p>
             </section>
@@ -816,10 +831,7 @@
               <h2>Працюємо щодня</h2>
               <p>Зручний розклад для ранкових, денних і вечірніх тренувань.</p>
             </div>
-            <div class="price-table schedule-table">
-              <div class="price-row"><span>Пн, Пт</span><strong>07:00 – 22:00</strong></div>
-              <div class="price-row"><span>Сб, Нд</span><strong>09:00 – 20:00</strong></div>
-            </div>
+            <div class="price-table schedule-table" id="schedule-table"></div>
           </article>
 
           <article class="rules-card reveal reveal-delay-1">
@@ -872,16 +884,7 @@
           <li><i class="fa-solid fa-location-dot"></i> м. Вінниця, вул. Пирогова 39, ТЦ «Анастасія»</li>
           <li class="contact-schedule-item">
             <i class="fa-solid fa-clock"></i>
-            <div class="contact-schedule-lines">
-              <div class="contact-schedule-line">
-                <span class="contact-schedule-days">Пн, Пт:</span>
-                <span class="contact-schedule-time">07:00 – 22:00</span>
-              </div>
-              <div class="contact-schedule-line">
-                <span class="contact-schedule-days">Сб, Нд:</span>
-                <span class="contact-schedule-time">09:00 – 20:00</span>
-              </div>
-            </div>
+            <div class="contact-schedule-lines" id="footer-schedule-lines"></div>
           </li>
         </ul>
       </div>
@@ -904,77 +907,85 @@
         </div>
       </div>
     </div>
+  </footer>
+  <template id="theme-admin-template">
     <div class="container footer-admin-bar">
       <button class="theme-admin-trigger" type="button" aria-label="Керування темою сайту" data-open-theme-modal>
         <i class="fa-solid fa-gear" aria-hidden="true"></i>
       </button>
     </div>
-  </footer>
-  <div class="theme-effects" id="theme-effects" aria-hidden="true"></div>
-  <div class="theme-admin-modal" id="theme-admin-modal" aria-hidden="true">
-    <div class="theme-admin-backdrop" data-close-theme-modal></div>
-    <div class="theme-admin-dialog" role="dialog" aria-modal="true" aria-labelledby="theme-admin-title">
-      <button class="theme-admin-close" type="button" aria-label="Закрити панель тем" data-close-theme-modal>
-        <i class="fa-solid fa-xmark" aria-hidden="true"></i>
-      </button>
+    <div class="theme-effects" id="theme-effects" aria-hidden="true"></div>
+    <div class="theme-admin-modal" id="theme-admin-modal" aria-hidden="true">
+      <div class="theme-admin-backdrop" data-close-theme-modal></div>
+      <div class="theme-admin-dialog" role="dialog" aria-modal="true" aria-labelledby="theme-admin-title">
+        <button class="theme-admin-close" type="button" aria-label="Закрити панель тем" data-close-theme-modal>
+          <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+        </button>
 
-      <div class="theme-admin-header">
-        <span class="eyebrow">Admin</span>
-        <h2 id="theme-admin-title">Керування темою сайту</h2>
-        <p>Оберіть святковий режим і збережіть його для всіх наступних оновлень сторінки в цьому браузері.</p>
-      </div>
-
-      <form class="theme-access-form" id="theme-access-form" novalidate>
-        <label class="form-field">
-          <span>Пароль доступу</span>
-          <input type="password" id="theme-admin-password" name="password" placeholder="Введіть пароль адміністратора" required>
-        </label>
-        <div class="theme-access-actions">
-          <button class="theme-submit-button" type="submit" aria-label="Увійти в панель керування темами">Увійти</button>
+        <div class="theme-admin-header">
+          <span class="eyebrow">Admin</span>
+          <h2 id="theme-admin-title">Керування темою сайту</h2>
+          <p>Оберіть святковий режим і збережіть його для всіх наступних оновлень сторінки в цьому браузері.</p>
         </div>
-        <p class="form-feedback" id="theme-access-feedback" role="status" aria-live="polite"></p>
-      </form>
 
-      <div class="theme-admin-panel" id="theme-admin-panel" hidden>
-        <div class="theme-options-grid">
-          <button class="theme-option-button is-active" type="button" data-theme-value="default" aria-label="Обрати тему Default">
-            <strong>Default</strong>
-            <span>Стандартний синій неон</span>
-          </button>
-          <button class="theme-option-button" type="button" data-theme-value="valentines" aria-label="Обрати тему Valentines">
-            <strong>Valentines</strong>
-            <span>Рожево-червона гама та сердечка</span>
-          </button>
-          <button class="theme-option-button" type="button" data-theme-value="march8" aria-label="Обрати тему March8">
-            <strong>March8</strong>
-            <span>Фіолетово-рожева тема з квітами</span>
-          </button>
-          <button class="theme-option-button" type="button" data-theme-value="april1" aria-label="Обрати тему April1">
-            <strong>April1</strong>
-            <span>Жартівливий режим з сюрпризом</span>
-          </button>
-          <button class="theme-option-button" type="button" data-theme-value="independence" aria-label="Обрати тему Independence">
-            <strong>Independence</strong>
-            <span>Синьо-жовте неонове підсвічування</span>
-          </button>
-          <button class="theme-option-button" type="button" data-theme-value="newyear" aria-label="Обрати тему NewYear">
-            <strong>NewYear</strong>
-            <span>Сріблясті акценти та снігопад</span>
-          </button>
-          <button class="theme-option-button" type="button" data-theme-value="easter" aria-label="Обрати тему Easter">
-            <strong>Easter</strong>
-            <span>Синьо-золоті кольори й візерунки</span>
-          </button>
+        <form class="theme-access-form" id="theme-access-form" novalidate>
+          <label class="form-field">
+            <span>Пароль доступу</span>
+            <input type="password" id="theme-admin-password" name="password" placeholder="Введіть пароль адміністратора" required>
+          </label>
+          <div class="theme-access-actions">
+            <button class="theme-submit-button" type="submit" aria-label="Увійти в панель керування темами">Увійти</button>
+          </div>
+          <p class="form-feedback" id="theme-access-feedback" role="status" aria-live="polite"></p>
+        </form>
+
+        <div class="theme-admin-panel" id="theme-admin-panel" hidden>
+          <div class="theme-options-grid">
+            <button class="theme-option-button is-active" type="button" data-theme-value="default" aria-label="Обрати тему Default">
+              <strong>Default</strong>
+              <span>Стандартний синій неон</span>
+            </button>
+            <button class="theme-option-button" type="button" data-theme-value="valentines" aria-label="Обрати тему Valentines">
+              <strong>Valentines</strong>
+              <span>Рожево-червона гама та сердечка</span>
+            </button>
+            <button class="theme-option-button" type="button" data-theme-value="march8" aria-label="Обрати тему March8">
+              <strong>March8</strong>
+              <span>Фіолетово-рожева тема з квітами</span>
+            </button>
+            <button class="theme-option-button" type="button" data-theme-value="april1" aria-label="Обрати тему April1">
+              <strong>April1</strong>
+              <span>Жартівливий режим з сюрпризом</span>
+            </button>
+            <button class="theme-option-button" type="button" data-theme-value="independence" aria-label="Обрати тему Independence">
+              <strong>Independence</strong>
+              <span>Синьо-жовте неонове підсвічування</span>
+            </button>
+            <button class="theme-option-button" type="button" data-theme-value="newyear" aria-label="Обрати тему NewYear">
+              <strong>NewYear</strong>
+              <span>Сріблясті акценти та снігопад</span>
+            </button>
+            <button class="theme-option-button" type="button" data-theme-value="easter" aria-label="Обрати тему Easter">
+              <strong>Easter</strong>
+              <span>Синьо-золоті кольори й візерунки</span>
+            </button>
+          </div>
+          <p class="theme-admin-note">Тема зберігається в localStorage і відновлюється після перезавантаження сторінки.</p>
         </div>
-        <p class="theme-admin-note">Тема зберігається в localStorage і відновлюється після перезавантаження сторінки.</p>
       </div>
     </div>
-  </div>
+  </template>
   <button class="back-to-top" type="button" aria-label="Вгору">
     <i class="fas fa-arrow-up" aria-hidden="true"></i>
   </button>
   <script>
     document.addEventListener("DOMContentLoaded", () => {
+      const isAdminView = new URLSearchParams(window.location.search).has("admin");
+      const themeAdminTemplate = document.querySelector("#theme-admin-template");
+      if (isAdminView && themeAdminTemplate) {
+        const fragment = themeAdminTemplate.content.cloneNode(true);
+        document.body.insertBefore(fragment, document.querySelector(".back-to-top"));
+      }
       const revealItems = document.querySelectorAll(".reveal");
       const teamImages = document.querySelectorAll(".team-photo img");
       const teamFilterButtons = document.querySelectorAll(".team-filter-button");
@@ -990,6 +1001,7 @@
       const bookingFeedback = document.querySelector("#booking-feedback");
       const bookingSubmit = bookingForm?.querySelector(".booking-submit");
       const reviewsGrid = document.querySelector("#reviews-grid");
+      const reviewsEmptyState = document.querySelector("#reviews-empty-state");
       const reviewsActions = document.querySelector("#reviews-actions");
       const reviewsLoadMoreButton = document.querySelector("#reviews-load-more");
       const faqItems = document.querySelectorAll(".faq-item");
@@ -1005,6 +1017,7 @@
       const teamModalRole = document.querySelector("#team-modal-role");
       const teamModalName = document.querySelector("#team-modal-name");
       const teamModalDescription = document.querySelector("#team-modal-description");
+      const teamModalAbout = document.querySelector("#team-modal-about");
       const teamModalResultsSection = document.querySelector("#team-modal-results-section");
       const teamModalResultsGrid = document.querySelector("#team-modal-results-grid");
       const throttleTargets = document.querySelectorAll(".button:not(.booking-submit):not(.review-submit), .team-filter-button");
@@ -1031,11 +1044,62 @@
       let approvedReviews = [];
       let visibleReviewsCount = 0;
       const REVIEWS_PAGE_SIZE = 6;
-      const fallbackReviews = Array.from(reviewsGrid?.querySelectorAll(".review-card") || []).map((card) => ({
+      const CLUB_SCHEDULE = [
+        { days: "Пн, Вт, Ср, Чт, Пт", time: "07:00 – 22:00" },
+        { days: "Сб, Нд", time: "09:00 – 20:00" }
+      ];
+      const GOOGLE_REVIEW_URL = "";
+      const fallbackReviews = Array.from(reviewsGrid?.querySelectorAll(".review-card:not([hidden])") || []).map((card) => ({
         text: card.querySelector("p")?.textContent?.trim() || "",
         name: card.querySelector("strong")?.textContent?.trim() || "",
         rating: null
       }));
+
+      const renderClubSchedule = () => {
+        const scheduleTable = document.querySelector("#schedule-table");
+        const footerScheduleLines = document.querySelector("#footer-schedule-lines");
+
+        if (scheduleTable) {
+          scheduleTable.innerHTML = CLUB_SCHEDULE.map((entry) => `
+            <div class="price-row"><span>${entry.days}</span><strong>${entry.time}</strong></div>
+          `).join("");
+        }
+
+        if (footerScheduleLines) {
+          footerScheduleLines.innerHTML = CLUB_SCHEDULE.map((entry) => `
+            <div class="contact-schedule-line">
+              <span class="contact-schedule-days">${entry.days}:</span>
+              <span class="contact-schedule-time">${entry.time}</span>
+            </div>
+          `).join("");
+        }
+      };
+
+      const showReviewsEmptyState = () => {
+        if (!reviewsGrid || !reviewsEmptyState) {
+          return;
+        }
+
+        reviewsGrid.innerHTML = "";
+        reviewsGrid.hidden = true;
+        reviewsActions.hidden = true;
+        reviewsEmptyState.hidden = false;
+
+        const reviewsGoogleLink = document.querySelector("#reviews-google-link");
+        if (reviewsGoogleLink && GOOGLE_REVIEW_URL) {
+          reviewsGoogleLink.href = GOOGLE_REVIEW_URL;
+          reviewsGoogleLink.hidden = false;
+        }
+      };
+
+      const hideReviewsEmptyState = () => {
+        if (!reviewsGrid || !reviewsEmptyState) {
+          return;
+        }
+
+        reviewsGrid.hidden = false;
+        reviewsEmptyState.hidden = true;
+      };
 
       const clearModalAutoCloseTimer = () => {
         if (modalAutoCloseTimer) {
@@ -1206,6 +1270,12 @@
           return;
         }
 
+        if (!fallbackReviews.length) {
+          showReviewsEmptyState();
+          return;
+        }
+
+        hideReviewsEmptyState();
         reviewsGrid.innerHTML = "";
         syncReviewsLayout(fallbackReviews.length);
         reviewsActions.hidden = true;
@@ -1220,6 +1290,7 @@
           return;
         }
 
+        hideReviewsEmptyState();
         const nextVisibleCount = Math.min(visibleReviewsCount + REVIEWS_PAGE_SIZE, approvedReviews.length);
         const nextBatch = approvedReviews.slice(visibleReviewsCount, nextVisibleCount);
 
@@ -1274,14 +1345,14 @@
       const teamProfiles = {
         "olga-1": {
           name: "Числова Ольга",
-          role: "Тренер",
+          role: "Тренер · профіль 1",
           photo: "images/team/olga-1.jpg",
           description:
             "Персональний тренер і сертифікований дієтолог. Допомагає вибудувати системний прогрес через індивідуальні навантаження, контроль техніки та грамотну корекцію раціону."
         },
         "olga-2": {
           name: "Числова Ольга",
-          role: "Тренер",
+          role: "Тренер · профіль 2",
           photo: "images/team/olga-2.jpg",
           description:
             "Персональний тренер і сертифікований дієтолог. Допомагає вибудувати системний прогрес через індивідуальні навантаження, контроль техніки та грамотну корекцію раціону."
@@ -1321,6 +1392,8 @@
           name: "Кондратенко Роман",
           role: "Масажист, тренер",
           photo: "images/logo.png",
+          visible: false, // TEMP-HIDDEN: установи true, коли буде реальне фото
+          aboutVisible: false,
           description: "Професійний тренер клубу Power Place."
         },
         renata: {
@@ -1432,7 +1505,7 @@
       const openTeamModal = (teamId) => {
         const profile = teamProfiles[teamId];
 
-        if (!profile || !teamModal) {
+        if (!profile || profile.visible === false || !teamModal) {
           return;
         }
 
@@ -1442,6 +1515,9 @@
         teamModalRole.textContent = profile.role;
         teamModalName.textContent = profile.name;
         teamModalDescription.textContent = profile.description;
+        if (teamModalAbout) {
+          teamModalAbout.hidden = profile.aboutVisible === false;
+        }
         renderTeamResults(teamId, profile);
 
         teamModal.classList.add("is-open");
@@ -1504,6 +1580,11 @@
         });
 
         teamCards.forEach((card) => {
+          if (card.dataset.visible === "false") {
+            card.hidden = true;
+            return;
+          }
+
           const matches = filter === "all" || card.dataset.role === filter;
 
           if (card._hideTimer) {
@@ -1922,6 +2003,7 @@
       });
 
       syncHeaderState();
+      renderClubSchedule();
       updateHeaderHeightVar();
       loadApprovedReviews();
       window.addEventListener("scroll", () => {
