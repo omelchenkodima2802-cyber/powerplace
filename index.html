@@ -217,18 +217,18 @@
           </div>
           <div class="team-grid">
             <article class="team-card team-card-compact" data-role="trainer" data-id="olga-1" role="button" tabindex="0" aria-label="Детальніше про Числову Ольгу">
-              <div class="team-photo has-image"><img src="images/team/olga-1.jpg" alt="Тренер Числова Ольга — профіль 1" loading="lazy"></div>
+              <div class="team-photo has-image"><img src="images/team/olga-1.jpg" alt="Тренер Числова Ольга" loading="lazy"></div>
               <div class="team-info">
                 <h4>Числова Ольга</h4>
-                <p class="team-role">Тренер · профіль 1</p>
+                <p class="team-role">Тренер</p>
               </div>
               <div class="team-card-hover"><span>Детальніше</span><i class="fa-solid fa-plus" aria-hidden="true"></i></div>
             </article>
             <article class="team-card team-card-compact" data-role="trainer" data-id="olga-2" role="button" tabindex="0" aria-label="Детальніше про Числову Ольгу">
-              <div class="team-photo has-image"><img src="images/team/olga-2.jpg" alt="Тренер Числова Ольга — профіль 2" loading="lazy"></div>
+              <div class="team-photo has-image"><img src="images/team/olga-2.jpg" alt="Тренер Числова Ольга" loading="lazy"></div>
               <div class="team-info">
                 <h4>Числова Ольга</h4>
-                <p class="team-role">Тренер · профіль 2</p>
+                <p class="team-role">Тренер</p>
               </div>
               <div class="team-card-hover"><span>Детальніше</span><i class="fa-solid fa-plus" aria-hidden="true"></i></div>
             </article>
@@ -284,9 +284,9 @@
             <h3>Сервіс та підтримка щодня</h3>
           </div>
           <div class="team-grid team-grid-compact">
-            <article class="team-card team-card-compact" data-role="admin" data-id="renata" role="button" tabindex="0" aria-label="Детальніше про Ренату">
-              <div class="team-photo has-image"><img src="images/team/renata.jpg" alt="Адміністратор Рената" loading="lazy"></div>
-              <div class="team-info"><h4>Рената</h4><p class="team-role">Адміністратор</p></div>
+            <article class="team-card team-card-compact" data-role="admin" data-id="renata" role="button" tabindex="0" aria-label="Детальніше про Іонову Ренату">
+              <div class="team-photo has-image"><img src="images/team/renata.jpg" alt="Адміністратор Іонова Рената" loading="lazy"></div>
+              <div class="team-info"><h4>Іонова Рената</h4><p class="team-role">Адміністратор</p></div>
               <div class="team-card-hover"><span>Детальніше</span><i class="fa-solid fa-plus" aria-hidden="true"></i></div>
             </article>
           </div>
@@ -979,6 +979,10 @@
     <i class="fas fa-arrow-up" aria-hidden="true"></i>
   </button>
   <script>
+    if ("scrollRestoration" in history) {
+      history.scrollRestoration = "manual";
+    }
+
     document.addEventListener("DOMContentLoaded", () => {
       const isAdminView = new URLSearchParams(window.location.search).has("admin");
       const themeAdminTemplate = document.querySelector("#theme-admin-template");
@@ -1131,9 +1135,7 @@
         document.documentElement.style.setProperty("--header-h", `${headerHeight}px`);
       };
 
-      const getHeaderHeight = () => header?.offsetHeight || 72;
-
-      const scrollToHashTarget = (hash, { updateHash = true } = {}) => {
+      const scrollToHashTarget = (hash) => {
         if (!hash || hash === "#") {
           return;
         }
@@ -1145,17 +1147,11 @@
         }
 
         updateHeaderHeightVar();
-        const headerHeight = getHeaderHeight();
-        const targetTop = target.getBoundingClientRect().top + window.scrollY - headerHeight - 8;
-
-        window.scrollTo({
-          top: Math.max(targetTop, 0),
-          behavior: "smooth"
+        target.scrollIntoView({
+          behavior: "smooth",
+          block: "start"
         });
-
-        if (updateHash && window.location.hash !== hash) {
-          window.history.pushState(null, "", hash);
-        }
+        window.history.replaceState(null, "", `${window.location.pathname}${window.location.search}`);
       };
 
       const closeMobileMenu = () => {
@@ -1345,14 +1341,14 @@
       const teamProfiles = {
         "olga-1": {
           name: "Числова Ольга",
-          role: "Тренер · профіль 1",
+          role: "Тренер",
           photo: "images/team/olga-1.jpg",
           description:
             "Персональний тренер і сертифікований дієтолог. Допомагає вибудувати системний прогрес через індивідуальні навантаження, контроль техніки та грамотну корекцію раціону."
         },
         "olga-2": {
           name: "Числова Ольга",
-          role: "Тренер · профіль 2",
+          role: "Тренер",
           photo: "images/team/olga-2.jpg",
           description:
             "Персональний тренер і сертифікований дієтолог. Допомагає вибудувати системний прогрес через індивідуальні навантаження, контроль техніки та грамотну корекцію раціону."
@@ -1397,7 +1393,7 @@
           description: "Професійний тренер клубу Power Place."
         },
         renata: {
-          name: "Рената Ионова",
+          name: "Іонова Рената",
           role: "Адміністратор",
           photo: "images/team/renata.jpg",
           description: "Адміністратор клубу Power Place."
@@ -2005,7 +2001,14 @@
       syncHeaderState();
       renderClubSchedule();
       updateHeaderHeightVar();
+      if (window.location.hash) {
+        window.history.replaceState(null, "", `${window.location.pathname}${window.location.search}`);
+      }
+      window.scrollTo(0, 0);
       loadApprovedReviews();
+      window.addEventListener("load", () => {
+        window.scrollTo(0, 0);
+      }, { once: true });
       window.addEventListener("scroll", () => {
         syncHeaderState();
         updateHeaderHeightVar();
@@ -2082,11 +2085,6 @@
         headerNav?.setAttribute("aria-hidden", "true");
       }
 
-      if (window.location.hash && document.querySelector(window.location.hash)) {
-        window.setTimeout(() => {
-          scrollToHashTarget(window.location.hash, { updateHash: false });
-        }, 80);
-      }
     });
   </script>
   <script src="admin.js"></script>
