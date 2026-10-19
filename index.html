@@ -300,28 +300,28 @@
 
         <div class="gallery-grid">
           <article class="gallery-card reveal">
-            <img src="images/gallery/gallery-1.webp" alt="Простір PowerPlace - фото 1" loading="lazy">
+            <img src="images/gallery/gallery-1.webp" alt="Простір PowerPlace - фото 1" loading="lazy" width="1200" height="900">
           </article>
           <article class="gallery-card reveal reveal-delay-1">
-            <img src="images/gallery/gallery-2.webp" alt="Простір PowerPlace - фото 2" loading="lazy">
+            <img src="images/gallery/gallery-2.webp" alt="Простір PowerPlace - фото 2" loading="lazy" width="1200" height="900">
           </article>
           <article class="gallery-card reveal reveal-delay-2">
-            <img src="images/gallery/gallery-3.webp" alt="Простір PowerPlace - фото 3" loading="lazy">
+            <img src="images/gallery/gallery-3.webp" alt="Простір PowerPlace - фото 3" loading="lazy" width="1200" height="900">
           </article>
           <article class="gallery-card reveal">
-            <img src="images/gallery/gallery-4.webp" alt="Простір PowerPlace - фото 4" loading="lazy">
+            <img src="images/gallery/gallery-4.webp" alt="Простір PowerPlace - фото 4" loading="lazy" width="1200" height="900">
           </article>
           <article class="gallery-card reveal reveal-delay-1">
-            <img src="images/gallery/gallery-5.webp" alt="Простір PowerPlace - фото 5" loading="lazy">
+            <img src="images/gallery/gallery-5.webp" alt="Простір PowerPlace - фото 5" loading="lazy" width="1200" height="900">
           </article>
           <article class="gallery-card reveal reveal-delay-2">
-            <img src="images/gallery/gallery-6.webp" alt="Простір PowerPlace - фото 6" loading="lazy">
+            <img src="images/gallery/gallery-6.webp" alt="Простір PowerPlace - фото 6" loading="lazy" width="1200" height="900">
           </article>
           <article class="gallery-card reveal">
-            <img src="images/gallery/gallery-7.webp" alt="Простір PowerPlace - фото 7" loading="lazy">
+            <img src="images/gallery/gallery-7.webp" alt="Простір PowerPlace - фото 7" loading="lazy" width="1200" height="900">
           </article>
           <article class="gallery-card reveal reveal-delay-1">
-            <img src="images/gallery/gallery-8.webp" alt="Простір PowerPlace - фото 8" loading="lazy">
+            <img src="images/gallery/gallery-8.webp" alt="Простір PowerPlace - фото 8" loading="lazy" width="1200" height="900">
           </article>
         </div>
       </div>
@@ -1060,6 +1060,39 @@
       };
 
       const isMobileHeader = () => window.innerWidth <= 900;
+      const anchorLinks = document.querySelectorAll('a[href^="#"]');
+
+      const updateHeaderHeightVar = () => {
+        const headerHeight = header?.offsetHeight || 72;
+        document.documentElement.style.setProperty("--header-h", `${headerHeight}px`);
+      };
+
+      const getHeaderHeight = () => header?.offsetHeight || 72;
+
+      const scrollToHashTarget = (hash, { updateHash = true } = {}) => {
+        if (!hash || hash === "#") {
+          return;
+        }
+
+        const target = document.querySelector(hash);
+
+        if (!target) {
+          return;
+        }
+
+        updateHeaderHeightVar();
+        const headerHeight = getHeaderHeight();
+        const targetTop = target.getBoundingClientRect().top + window.scrollY - headerHeight - 8;
+
+        window.scrollTo({
+          top: Math.max(targetTop, 0),
+          behavior: "smooth"
+        });
+
+        if (updateHash && window.location.hash !== hash) {
+          window.history.pushState(null, "", hash);
+        }
+      };
 
       const closeMobileMenu = () => {
         if (!header || !headerBurger) {
@@ -1889,8 +1922,12 @@
       });
 
       syncHeaderState();
+      updateHeaderHeightVar();
       loadApprovedReviews();
-      window.addEventListener("scroll", syncHeaderState, { passive: true });
+      window.addEventListener("scroll", () => {
+        syncHeaderState();
+        updateHeaderHeightVar();
+      }, { passive: true });
       applyTeamFilter("all");
 
       backToTopButton?.addEventListener("click", () => {
@@ -1911,7 +1948,39 @@
         });
       });
 
+      anchorLinks.forEach((link) => {
+        const hash = link.getAttribute("href");
+
+        if (!hash || hash === "#") {
+          return;
+        }
+
+        link.addEventListener("click", (event) => {
+          const target = document.querySelector(hash);
+
+          if (!target) {
+            return;
+          }
+
+          event.preventDefault();
+          const shouldCloseMobileMenu = isMobileHeader() && header?.classList.contains("is-menu-open");
+
+          if (shouldCloseMobileMenu) {
+            closeMobileMenu();
+            window.setTimeout(() => {
+              scrollToHashTarget(hash);
+            }, 80);
+            return;
+          }
+
+          window.requestAnimationFrame(() => {
+            scrollToHashTarget(hash);
+          });
+        });
+      });
+
       window.addEventListener("resize", () => {
+        updateHeaderHeightVar();
         if (!isMobileHeader()) {
           closeMobileMenu();
           headerNav?.removeAttribute("aria-hidden");
@@ -1926,8 +1995,15 @@
         }
       });
 
+      updateHeaderHeightVar();
       if (isMobileHeader()) {
         headerNav?.setAttribute("aria-hidden", "true");
+      }
+
+      if (window.location.hash && document.querySelector(window.location.hash)) {
+        window.setTimeout(() => {
+          scrollToHashTarget(window.location.hash, { updateHash: false });
+        }, 80);
       }
     });
   </script>

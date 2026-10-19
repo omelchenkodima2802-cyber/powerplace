@@ -62,7 +62,7 @@
 
 html {
   scroll-behavior: smooth;
-  scroll-padding-top: 72px;
+  scroll-padding-top: calc(var(--header-h, 72px) + 8px);
   overflow-x: hidden;
   max-width: 100%;
 }
@@ -93,7 +93,11 @@ body::before {
 
 section[id],
 footer[id] {
-  scroll-margin-top: var(--header-offset);
+  scroll-margin-top: 0;
+}
+
+.pricing {
+  scroll-margin-top: 0;
 }
 
 a {
