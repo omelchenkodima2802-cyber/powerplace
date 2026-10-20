@@ -170,7 +170,7 @@ ul {
   isolation: isolate;
   background: transparent;
   border-bottom: 0;
-  transition: all 0.4s ease;
+  transition: box-shadow 0.25s ease;
 }
 
 .site-header::before {
@@ -2885,6 +2885,10 @@ body.theme-modal-open {
     scroll-behavior: auto;
   }
 
+  .site-header {
+    transition: none;
+  }
+
   .reveal,
   .reveal.is-visible,
   .service-card,
@@ -2895,7 +2899,6 @@ body.theme-modal-open {
   .button,
   .socials a,
   .team-filter-button,
-  .site-header,
   .back-to-top,
   .theme-admin-trigger,
   .review-modal,
@@ -2927,6 +2930,23 @@ body.theme-modal-open {
     filter: none;
   }
 
+}
+
+@media (max-width: 1024px), (hover: none) and (pointer: coarse) {
+  .site-header {
+    transform: none;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+
+  .site-header.hdr--hidden {
+    transform: translateY(-100%);
+  }
+
+  .site-header.is-scrolled::before,
+  .site-header.header-shrunk::before,
+  .site-header.is-menu-open::before {
+    background: rgba(var(--bg-rgb), 0.92);
+  }
 }
 
 @media (max-width: 1080px) {

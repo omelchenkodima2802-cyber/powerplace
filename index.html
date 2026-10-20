@@ -1017,6 +1017,7 @@
       const headerBurger = document.querySelector(".header-burger");
       const headerNav = document.querySelector("#site-nav");
       const headerNavLinks = document.querySelectorAll("#site-nav a");
+      const hideableHeaderQuery = window.matchMedia("(max-width: 1024px), (hover: none) and (pointer: coarse)");
       const backToTopButton = document.querySelector(".back-to-top");
       const bookingForm = document.getElementById("booking-form");
       const bookingPhone = document.querySelector("#booking-phone");
@@ -1063,6 +1064,8 @@
       let modalAutoCloseTimer = 0;
       let previousBodyOverflow = "";
       let mobileMenuPreviousBodyOverflow = "";
+      let lastHeaderScrollY = Math.max(0, window.scrollY);
+      let headerScrollTicking = false;
       let approvedReviews = [];
       let visibleReviewsCount = 0;
       const REVIEWS_PAGE_SIZE = 6;
@@ -1165,6 +1168,7 @@
         }
 
         updateHeaderHeightVar();
+        showHeader();
         target.scrollIntoView({
           behavior: "smooth",
           block: "start"
@@ -1189,9 +1193,14 @@
         }
       };
 
+      const showHeader = () => {
+        header?.classList.remove("hdr--hidden");
+      };
+
       headerLogoLink?.addEventListener("click", (event) => {
         event.preventDefault();
         closeMobileMenu();
+        showHeader();
         window.history.replaceState(null, "", `${window.location.pathname}${window.location.search}`);
         window.scrollTo(0, 0);
         window.location.reload();
@@ -1208,6 +1217,7 @@
         headerBurger.setAttribute("aria-expanded", "true");
         headerBurger.setAttribute("aria-label", "Закрити меню");
         headerNav?.setAttribute("aria-hidden", "false");
+        showHeader();
         document.body.classList.add("mobile-menu-open");
         document.body.style.overflow = "hidden";
       };
@@ -1687,10 +1697,68 @@
         });
       });
 
-      const syncHeaderState = () => {
-        header?.classList.toggle("is-scrolled", window.scrollY > 12);
-        header?.classList.toggle("header-shrunk", window.scrollY > 50);
-        backToTopButton?.classList.toggle("is-visible", window.scrollY > 300);
+      const syncHeaderState = (y = window.scrollY) => {
+        header?.classList.toggle("is-scrolled", y > 10);
+        header?.classList.toggle("header-shrunk", y > 50);
+        backToTopButton?.classList.toggle("is-visible", y > 300);
+      };
+
+      const syncResponsiveHeaderVisibility = () => {
+        const y = Math.max(0, window.scrollY);
+        const delta = y - lastHeaderScrollY;
+        const isAtPageBottom =
+          y + window.innerHeight >= document.documentElement.scrollHeight - 2;
+
+        syncHeaderState(y);
+        updateHeaderHeightVar();
+
+        if (!hideableHeaderQuery.matches) {
+          showHeader();
+          lastHeaderScrollY = y;
+          return;
+        }
+
+        if (headerBurger?.getAttribute("aria-expanded") === "true" || header?.classList.contains("is-menu-open")) {
+          showHeader();
+          lastHeaderScrollY = y;
+          return;
+        }
+
+        if (y < 80) {
+          showHeader();
+          lastHeaderScrollY = y;
+          return;
+        }
+
+        if (isAtPageBottom) {
+          lastHeaderScrollY = y;
+          return;
+        }
+
+        if (Math.abs(delta) < 6) {
+          lastHeaderScrollY = y;
+          return;
+        }
+
+        if (delta > 0) {
+          header?.classList.add("hdr--hidden");
+        } else {
+          showHeader();
+        }
+
+        lastHeaderScrollY = y;
+      };
+
+      const handleHeaderScroll = () => {
+        if (headerScrollTicking) {
+          return;
+        }
+
+        headerScrollTicking = true;
+        window.requestAnimationFrame(() => {
+          syncResponsiveHeaderVisibility();
+          headerScrollTicking = false;
+        });
       };
 
       const sanitizePhoneInput = (value) =>
@@ -2024,9 +2092,8 @@
         });
       });
 
-      syncHeaderState();
+      syncResponsiveHeaderVisibility();
       renderClubSchedule();
-      updateHeaderHeightVar();
       if (window.location.hash) {
         window.history.replaceState(null, "", `${window.location.pathname}${window.location.search}`);
       }
@@ -2035,10 +2102,7 @@
       window.addEventListener("load", () => {
         window.scrollTo(0, 0);
       }, { once: true });
-      window.addEventListener("scroll", () => {
-        syncHeaderState();
-        updateHeaderHeightVar();
-      }, { passive: true });
+      window.addEventListener("scroll", handleHeaderScroll, { passive: true });
       applyTeamFilter("all");
 
       backToTopButton?.addEventListener("click", () => {
@@ -2091,13 +2155,19 @@
       });
 
       window.addEventListener("resize", () => {
-        updateHeaderHeightVar();
+        lastHeaderScrollY = Math.max(0, window.scrollY);
+        syncResponsiveHeaderVisibility();
         if (!isMobileHeader()) {
           closeMobileMenu();
+          showHeader();
           headerNav?.removeAttribute("aria-hidden");
         } else if (!header?.classList.contains("is-menu-open")) {
           headerNav?.setAttribute("aria-hidden", "true");
         }
+      });
+
+      header?.addEventListener("focusin", () => {
+        showHeader();
       });
 
       window.addEventListener("keydown", (event) => {
@@ -2106,7 +2176,7 @@
         }
       });
 
-      updateHeaderHeightVar();
+      syncResponsiveHeaderVisibility();
       if (isMobileHeader()) {
         headerNav?.setAttribute("aria-hidden", "true");
       }
