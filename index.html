@@ -1017,7 +1017,8 @@
       const headerBurger = document.querySelector(".header-burger");
       const headerNav = document.querySelector("#site-nav");
       const headerNavLinks = document.querySelectorAll("#site-nav a");
-      const hideableHeaderQuery = window.matchMedia("(max-width: 1024px), (hover: none) and (pointer: coarse)");
+      const mobileHeaderWidthQuery = window.matchMedia("(max-width: 1024px)");
+      const coarsePointerHeaderQuery = window.matchMedia("(hover: none) and (pointer: coarse)");
       const backToTopButton = document.querySelector(".back-to-top");
       const bookingForm = document.getElementById("booking-form");
       const bookingPhone = document.querySelector("#booking-phone");
@@ -1149,6 +1150,8 @@
       };
 
       const isMobileHeader = () => window.innerWidth <= 900;
+      const shouldUseHideableHeader = () =>
+        mobileHeaderWidthQuery.matches || coarsePointerHeaderQuery.matches;
       const anchorLinks = document.querySelectorAll('a[href^="#"]');
 
       const updateHeaderHeightVar = () => {
@@ -1712,7 +1715,7 @@
         syncHeaderState(y);
         updateHeaderHeightVar();
 
-        if (!hideableHeaderQuery.matches) {
+        if (!shouldUseHideableHeader()) {
           showHeader();
           lastHeaderScrollY = y;
           return;

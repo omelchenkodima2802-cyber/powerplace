@@ -63,7 +63,7 @@
 html {
   scroll-behavior: smooth;
   scroll-padding-top: calc(var(--header-h, 72px) + 8px);
-  overflow-x: hidden;
+  overflow-x: clip;
   max-width: 100%;
 }
 
@@ -78,7 +78,7 @@ body {
     var(--bg);
   color: var(--text);
   line-height: 1.6;
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 body::before {
@@ -166,7 +166,7 @@ ul {
 .site-header {
   position: sticky;
   top: 0;
-  z-index: 100;
+  z-index: 400;
   isolation: isolate;
   background: transparent;
   border-bottom: 0;
@@ -2946,6 +2946,15 @@ body.theme-modal-open {
   .site-header.header-shrunk::before,
   .site-header.is-menu-open::before {
     background: rgba(var(--bg-rgb), 0.92);
+  }
+}
+
+@media (min-width: 1025px) and (hover: hover) {
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 400;
+    transform: none;
   }
 }
 
