@@ -30,15 +30,32 @@
     rel="stylesheet"
   >
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <link rel="icon" href="images/logo.png" type="image/png">
+  <link rel="icon" href="images/favicon-32x32.png" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="images/apple-touch-icon.png" sizes="180x180">
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="themes.css">
 </head>
 <body>
   <header class="site-header">
     <div class="container header-inner">
-      <a class="logo header-logo" href="#hero" aria-label="POWER PLACE">
-        <span>POWER PLACE</span>
+      <a href="/" class="hdr__logo header-logo" aria-label="Power Place, на головну">
+        <img
+          class="hdr__logo-full"
+          src="images/logo-power-place.png"
+          srcset="images/logo-power-place.png 1x, images/logo-power-place@2x.png 2x"
+          alt="Power Place"
+          width="480"
+          height="160"
+        >
+        <img
+          class="hdr__logo-emblem"
+          src="images/logo-power-place-emblem.png"
+          srcset="images/logo-power-place-emblem.png 1x, images/logo-power-place-emblem@2x.png 2x"
+          alt=""
+          aria-hidden="true"
+          width="160"
+          height="160"
+        >
       </a>
       <nav class="nav" id="site-nav">
         <a href="#about">Про нас</a>
@@ -996,6 +1013,7 @@
       const teamGroups = document.querySelectorAll("[data-team-group]");
       const teamCards = document.querySelectorAll(".team-card");
       const header = document.querySelector(".site-header");
+      const headerLogoLink = document.querySelector(".hdr__logo");
       const headerBurger = document.querySelector(".header-burger");
       const headerNav = document.querySelector("#site-nav");
       const headerNavLinks = document.querySelectorAll("#site-nav a");
@@ -1170,6 +1188,14 @@
           document.body.style.overflow = mobileMenuPreviousBodyOverflow;
         }
       };
+
+      headerLogoLink?.addEventListener("click", (event) => {
+        event.preventDefault();
+        closeMobileMenu();
+        window.history.replaceState(null, "", `${window.location.pathname}${window.location.search}`);
+        window.scrollTo(0, 0);
+        window.location.reload();
+      });
 
       const openMobileMenu = () => {
         if (!header || !headerBurger) {
