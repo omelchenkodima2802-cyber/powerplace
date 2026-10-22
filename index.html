@@ -1131,7 +1131,6 @@
       ];
       const GOOGLE_REVIEW_URL = "";
       const GALLERY_PAGE_SIZE = 8;
-      const GALLERY_BALANCE_THRESHOLD = 0.16;
       const POWER_BAR_AUTOPLAY_MS = 4500;
       const GALLERY_ITEMS = [
         { src: "images/gallery/gallery-01-gym.webp", srcSm: "images/gallery/gallery-01-gym-sm.webp", category: "gym", width: 1024, height: 1536, alt: "Силова зона Power Place" },
@@ -1207,72 +1206,92 @@
           ? GALLERY_ITEMS
           : GALLERY_ITEMS.filter((item) => item.category === galleryState.filter);
 
-      const getGalleryColumnCount = (width = window.innerWidth) => {
+      const getGalleryGap = (width = window.innerWidth) => (width < 600 ? 8 : 10);
+
+      const getGalleryRowHeight = (width = window.innerWidth) => {
         if (width < 600) {
-          return 2;
+          return 120;
         }
 
         if (width < 1280) {
-          return 3;
+          return 200;
         }
 
-        return 4;
+        return 240;
       };
 
-      const getGalleryGap = (width = window.innerWidth) => (width < 600 ? 8 : 12);
+      const clampGalleryAspectRatio = (item) =>
+        Math.min(2, Math.max(0.75, item.width / item.height));
 
-      const getGalleryVisibleCandidates = (columnCount, totalItems) => {
-        const candidatesMap = {
-          2: [8, 10],
-          3: [9, 12],
-          4: [8, 12]
-        };
-
-        return (candidatesMap[columnCount] || [GALLERY_PAGE_SIZE])
-          .map((count) => Math.min(count, totalItems))
-          .filter((count, index, counts) => count > 0 && counts.indexOf(count) === index);
-      };
-
-      const getGalleryLoadIncrement = (columnCount) => {
-        if (columnCount === 2) {
-          return 10;
+      const getGalleryLastRowCount = (items) => {
+        if (!items.length) {
+          return 0;
         }
 
-        return 12;
-      };
+        const containerWidth = galleryGrid?.clientWidth || galleryGrid?.parentElement?.clientWidth || window.innerWidth;
+        const rowHeight = getGalleryRowHeight();
+        const gap = getGalleryGap();
+        let currentRowWidth = 0;
+        let currentRowCount = 0;
+        let lastRowCount = 0;
 
-      const getBalancedGalleryHeights = (items, columnCount) => {
-        const columnHeights = Array.from({ length: columnCount }, () => 0);
+        items.forEach((item, index) => {
+          const estimatedWidth = clampGalleryAspectRatio(item) * rowHeight;
+          const nextRowWidth = currentRowCount === 0
+            ? estimatedWidth
+            : currentRowWidth + gap + estimatedWidth;
 
-        items.forEach((item) => {
-          const shortestColumnHeight = Math.min(...columnHeights);
-          const shortestColumnIndex = columnHeights.indexOf(shortestColumnHeight);
-          columnHeights[shortestColumnIndex] += item.height / item.width;
+          if (currentRowCount > 0 && nextRowWidth > containerWidth) {
+            lastRowCount = currentRowCount;
+            currentRowWidth = estimatedWidth;
+            currentRowCount = 1;
+          } else {
+            currentRowWidth = nextRowWidth;
+            currentRowCount += 1;
+          }
+
+          if (index === items.length - 1) {
+            lastRowCount = currentRowCount;
+          }
         });
 
-        return columnHeights;
+        return lastRowCount;
       };
 
       const getAdaptiveGalleryVisibleCount = (items) => {
         const totalItems = items.length;
-        const columnCount = getGalleryColumnCount();
-        const candidates = getGalleryVisibleCandidates(columnCount, totalItems);
 
-        if (!candidates.length) {
+        if (!totalItems) {
           return 0;
         }
 
-        if (candidates.length === 1) {
-          return candidates[0];
+        const baseCount = Math.min(GALLERY_PAGE_SIZE, totalItems);
+
+        if (window.innerWidth < 600) {
+          return baseCount;
         }
 
-        const [baseCount, expandedCount] = candidates;
-        const baseHeights = getBalancedGalleryHeights(items.slice(0, baseCount), columnCount);
-        const tallestColumn = Math.max(...baseHeights);
-        const shortestColumn = Math.min(...baseHeights);
-        const imbalance = tallestColumn === 0 ? 0 : (tallestColumn - shortestColumn) / tallestColumn;
+        if (getGalleryLastRowCount(items.slice(0, baseCount)) !== 1) {
+          return baseCount;
+        }
 
-        return imbalance > GALLERY_BALANCE_THRESHOLD ? expandedCount : baseCount;
+        for (const extraCount of [1, 2]) {
+          const candidateCount = Math.min(totalItems, baseCount + extraCount);
+
+          if (candidateCount !== baseCount && getGalleryLastRowCount(items.slice(0, candidateCount)) !== 1) {
+            return candidateCount;
+          }
+        }
+
+        for (const removeCount of [1, 2]) {
+          const candidateCount = baseCount - removeCount;
+
+          if (candidateCount >= 2 && getGalleryLastRowCount(items.slice(0, candidateCount)) !== 1) {
+            return candidateCount;
+          }
+        }
+
+        return baseCount;
       };
 
       const centerActiveGalleryFilter = () => {
@@ -1388,57 +1407,38 @@
         }
 
         const filteredItems = getFilteredGalleryItems();
-        const columnCount = getGalleryColumnCount();
         const gap = getGalleryGap();
+        const rowHeight = getGalleryRowHeight();
 
         if (!galleryState.hasExpanded) {
           galleryState.visibleCount = getAdaptiveGalleryVisibleCount(filteredItems);
         }
 
         const visibleItems = filteredItems.slice(0, galleryState.visibleCount);
-        const columnModels = Array.from({ length: columnCount }, () => ({
-          items: [],
-          estimatedHeight: 0
-        }));
-
-        visibleItems.forEach((item, index) => {
-          const shortestColumnHeight = Math.min(...columnModels.map((column) => column.estimatedHeight));
-          const shortestColumn = columnModels.find((column) => column.estimatedHeight === shortestColumnHeight) || columnModels[0];
-          shortestColumn.items.push({ item, index });
-          shortestColumn.estimatedHeight += item.height / item.width;
-        });
-
-        galleryGrid.style.setProperty("--gallery-columns", String(columnCount));
         galleryGrid.style.setProperty("--gallery-gap", `${gap}px`);
+        galleryGrid.style.setProperty("--row-h", `${rowHeight}px`);
         galleryGrid.innerHTML = "";
 
-        columnModels.forEach((columnModel) => {
-          const column = document.createElement("div");
-          column.className = "gallery-grid-column";
+        visibleItems.forEach((item, index) => {
+          const card = document.createElement("button");
+          card.type = "button";
+          card.className = "gallery-card";
+          card.setAttribute("aria-label", `Відкрити фото: ${item.alt}`);
+          card.style.setProperty("--ar", String(clampGalleryAspectRatio(item)));
 
-          columnModel.items.forEach(({ item, index }) => {
-            const card = document.createElement("button");
-            card.type = "button";
-            card.className = "gallery-card";
-            card.setAttribute("aria-label", `Відкрити фото: ${item.alt}`);
-            card.style.aspectRatio = `${item.width} / ${item.height}`;
+          const image = document.createElement("img");
+          image.src = item.srcSm;
+          image.alt = item.alt;
+          image.loading = "lazy";
+          image.decoding = "async";
+          image.width = item.width;
+          image.height = item.height;
 
-            const image = document.createElement("img");
-            image.src = item.srcSm;
-            image.alt = item.alt;
-            image.loading = "lazy";
-            image.decoding = "async";
-            image.width = item.width;
-            image.height = item.height;
-
-            card.appendChild(image);
-            card.addEventListener("click", () => {
-              openGalleryLightbox(filteredItems, index, card);
-            });
-            column.appendChild(card);
+          card.appendChild(image);
+          card.addEventListener("click", () => {
+            openGalleryLightbox(filteredItems, index, card);
           });
-
-          galleryGrid.appendChild(column);
+          galleryGrid.appendChild(card);
         });
 
         updateGalleryFilterButtons();
@@ -2170,7 +2170,7 @@
 
       galleryLoadMoreButton?.addEventListener("click", () => {
         galleryState.hasExpanded = true;
-        galleryState.visibleCount += getGalleryLoadIncrement(getGalleryColumnCount());
+        galleryState.visibleCount += GALLERY_PAGE_SIZE;
         renderGallery();
       });
 
