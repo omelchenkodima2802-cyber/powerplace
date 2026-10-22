@@ -322,31 +322,20 @@
           </p>
         </div>
 
-        <div class="gallery-grid">
-          <article class="gallery-card reveal">
-            <img src="images/gallery/gallery-1.webp" alt="Простір PowerPlace - фото 1" loading="lazy" width="1200" height="900">
-          </article>
-          <article class="gallery-card reveal reveal-delay-1">
-            <img src="images/gallery/gallery-2.webp" alt="Простір PowerPlace - фото 2" loading="lazy" width="1200" height="900">
-          </article>
-          <article class="gallery-card reveal reveal-delay-2">
-            <img src="images/gallery/gallery-3.webp" alt="Простір PowerPlace - фото 3" loading="lazy" width="1200" height="900">
-          </article>
-          <article class="gallery-card reveal">
-            <img src="images/gallery/gallery-4.webp" alt="Простір PowerPlace - фото 4" loading="lazy" width="1200" height="900">
-          </article>
-          <article class="gallery-card reveal reveal-delay-1">
-            <img src="images/gallery/gallery-5.webp" alt="Простір PowerPlace - фото 5" loading="lazy" width="1200" height="900">
-          </article>
-          <article class="gallery-card reveal reveal-delay-2">
-            <img src="images/gallery/gallery-6.webp" alt="Простір PowerPlace - фото 6" loading="lazy" width="1200" height="900">
-          </article>
-          <article class="gallery-card reveal">
-            <img src="images/gallery/gallery-7.webp" alt="Простір PowerPlace - фото 7" loading="lazy" width="1200" height="900">
-          </article>
-          <article class="gallery-card reveal reveal-delay-1">
-            <img src="images/gallery/gallery-8.webp" alt="Простір PowerPlace - фото 8" loading="lazy" width="1200" height="900">
-          </article>
+        <div class="gallery-filters reveal" role="tablist" aria-label="Фільтр галереї">
+          <button class="gallery-filter-button is-active" type="button" data-gallery-filter="all" aria-label="Показати всі фото">Всі</button>
+          <button class="gallery-filter-button" type="button" data-gallery-filter="gym" aria-label="Показати фото залу">Зал</button>
+          <button class="gallery-filter-button" type="button" data-gallery-filter="reception" aria-label="Показати фото ресепшну">Ресепшн</button>
+          <button class="gallery-filter-button" type="button" data-gallery-filter="locker" aria-label="Показати фото роздягалень">Роздягальні</button>
+          <button class="gallery-filter-button" type="button" data-gallery-filter="massage" aria-label="Показати фото масажу">Масаж</button>
+        </div>
+
+        <div class="gallery-grid reveal is-visible" id="gallery-grid" aria-live="polite"></div>
+
+        <div class="gallery-actions" id="gallery-actions" hidden>
+          <button class="button button-secondary gallery-load-more" id="gallery-load-more" type="button" aria-label="Показати більше фото">
+            Показати ще
+          </button>
         </div>
       </div>
     </section>
@@ -354,9 +343,6 @@
     <section class="power-bar section" id="power-bar">
       <div class="container">
         <article class="power-bar-card reveal">
-          <div class="power-bar-icon">
-            <i class="fa-solid fa-martini-glass-citrus" aria-hidden="true"></i>
-          </div>
           <div class="power-bar-content">
             <span class="eyebrow">Power Bar</span>
             <h2>Відновлення та енергія після тренування</h2>
@@ -365,6 +351,23 @@
               протеїновий коктейль, ароматну каву або взяти корисний перекус,
               щоб відновитися й зарядитися далі.
             </p>
+          </div>
+          <div
+            class="power-bar-story"
+            id="power-bar-story"
+            tabindex="0"
+            role="region"
+            aria-label="Слайдер Power Bar"
+          >
+            <div class="power-bar-progress" id="power-bar-progress" aria-hidden="true"></div>
+            <div class="power-bar-slides" id="power-bar-slides"></div>
+            <div class="power-bar-caption" id="power-bar-caption"></div>
+            <button class="power-bar-nav power-bar-nav-prev" id="power-bar-prev" type="button" aria-label="Попереднє фото Power Bar">
+              <i class="fa-solid fa-chevron-left" aria-hidden="true"></i>
+            </button>
+            <button class="power-bar-nav power-bar-nav-next" id="power-bar-next" type="button" aria-label="Наступне фото Power Bar">
+              <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
+            </button>
           </div>
         </article>
       </div>
@@ -925,6 +928,34 @@
       </div>
     </div>
   </footer>
+  <div class="gallery-lightbox" id="gallery-lightbox" aria-hidden="true">
+    <div class="gallery-lightbox-backdrop" data-close-gallery-lightbox></div>
+    <div class="gallery-lightbox-dialog" role="dialog" aria-modal="true" aria-label="Перегляд фото Power Place">
+      <button class="gallery-lightbox-close" type="button" aria-label="Закрити галерею" data-close-gallery-lightbox>
+        <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+      </button>
+      <button class="gallery-lightbox-nav gallery-lightbox-prev" type="button" aria-label="Попереднє фото">
+        <i class="fa-solid fa-chevron-left" aria-hidden="true"></i>
+      </button>
+      <figure class="gallery-lightbox-figure">
+        <img
+          id="gallery-lightbox-image"
+          src=""
+          alt=""
+          width="1600"
+          height="1067"
+          decoding="async"
+        >
+        <figcaption class="gallery-lightbox-meta">
+          <span class="gallery-lightbox-counter" id="gallery-lightbox-counter">1 / 1</span>
+          <span class="gallery-lightbox-caption" id="gallery-lightbox-caption"></span>
+        </figcaption>
+      </figure>
+      <button class="gallery-lightbox-nav gallery-lightbox-next" type="button" aria-label="Наступне фото">
+        <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
+      </button>
+    </div>
+  </div>
   <template id="theme-admin-template">
     <div class="container footer-admin-bar">
       <button class="theme-admin-trigger" type="button" aria-label="Керування темою сайту" data-open-theme-modal>
@@ -1024,6 +1055,23 @@
       const bookingPhone = document.querySelector("#booking-phone");
       const bookingFeedback = document.querySelector("#booking-feedback");
       const bookingSubmit = bookingForm?.querySelector(".booking-submit");
+      const galleryGrid = document.querySelector("#gallery-grid");
+      const galleryActions = document.querySelector("#gallery-actions");
+      const galleryLoadMoreButton = document.querySelector("#gallery-load-more");
+      const galleryFilterButtons = document.querySelectorAll(".gallery-filter-button");
+      const galleryLightbox = document.querySelector("#gallery-lightbox");
+      const galleryLightboxImage = document.querySelector("#gallery-lightbox-image");
+      const galleryLightboxCounter = document.querySelector("#gallery-lightbox-counter");
+      const galleryLightboxCaption = document.querySelector("#gallery-lightbox-caption");
+      const galleryLightboxPrevButton = document.querySelector(".gallery-lightbox-prev");
+      const galleryLightboxNextButton = document.querySelector(".gallery-lightbox-next");
+      const galleryLightboxCloseButtons = document.querySelectorAll("[data-close-gallery-lightbox]");
+      const powerBarStory = document.querySelector("#power-bar-story");
+      const powerBarSlidesRoot = document.querySelector("#power-bar-slides");
+      const powerBarCaption = document.querySelector("#power-bar-caption");
+      const powerBarProgress = document.querySelector("#power-bar-progress");
+      const powerBarPrevButton = document.querySelector("#power-bar-prev");
+      const powerBarNextButton = document.querySelector("#power-bar-next");
       const reviewsGrid = document.querySelector("#reviews-grid");
       const reviewsEmptyState = document.querySelector("#reviews-empty-state");
       const reviewsActions = document.querySelector("#reviews-actions");
@@ -1075,11 +1123,55 @@
         { days: "Сб, Нд", time: "09:00 – 20:00" }
       ];
       const GOOGLE_REVIEW_URL = "";
+      const GALLERY_PAGE_SIZE = 8;
+      const POWER_BAR_AUTOPLAY_MS = 4500;
+      const GALLERY_ITEMS = [
+        { src: "images/gallery/gallery-01-gym.webp", srcSm: "images/gallery/gallery-01-gym-sm.webp", category: "gym", width: 1024, height: 1536, alt: "Силова зона Power Place" },
+        { src: "images/gallery/gallery-02-gym.webp", srcSm: "images/gallery/gallery-02-gym-sm.webp", category: "gym", width: 1600, height: 1067, alt: "Силова зона Power Place" },
+        { src: "images/gallery/gallery-03-gym.webp", srcSm: "images/gallery/gallery-03-gym-sm.webp", category: "gym", width: 1600, height: 1067, alt: "Силова зона Power Place" },
+        { src: "images/gallery/gallery-04-gym.webp", srcSm: "images/gallery/gallery-04-gym-sm.webp", category: "gym", width: 1600, height: 1067, alt: "Силова зона Power Place" },
+        { src: "images/gallery/gallery-05-reception.webp", srcSm: "images/gallery/gallery-05-reception-sm.webp", category: "reception", width: 1600, height: 1067, alt: "Ресепшн Power Place" },
+        { src: "images/gallery/gallery-06-reception.webp", srcSm: "images/gallery/gallery-06-reception-sm.webp", category: "reception", width: 1600, height: 1067, alt: "Ресепшн Power Place" },
+        { src: "images/gallery/gallery-07-gym.webp", srcSm: "images/gallery/gallery-07-gym-sm.webp", category: "gym", width: 1067, height: 1600, alt: "Силова зона Power Place" },
+        { src: "images/gallery/gallery-08-gym.webp", srcSm: "images/gallery/gallery-08-gym-sm.webp", category: "gym", width: 1600, height: 1067, alt: "Силова зона Power Place" },
+        { src: "images/gallery/gallery-09-locker.webp", srcSm: "images/gallery/gallery-09-locker-sm.webp", category: "locker", width: 1600, height: 1067, alt: "Роздягальня Power Place" },
+        { src: "images/gallery/gallery-10-locker.webp", srcSm: "images/gallery/gallery-10-locker-sm.webp", category: "locker", width: 1600, height: 1067, alt: "Роздягальня Power Place" },
+        { src: "images/gallery/gallery-11-massage.webp", srcSm: "images/gallery/gallery-11-massage-sm.webp", category: "massage", width: 1600, height: 1067, alt: "Масажний кабінет Power Place" },
+        { src: "images/gallery/gallery-12-massage.webp", srcSm: "images/gallery/gallery-12-massage-sm.webp", category: "massage", width: 1067, height: 1600, alt: "Масажний кабінет Power Place" },
+        { src: "images/gallery/gallery-13-gym.webp", srcSm: "images/gallery/gallery-13-gym-sm.webp", category: "gym", width: 1600, height: 1067, alt: "Силова зона Power Place" },
+        { src: "images/gallery/gallery-14-gym.webp", srcSm: "images/gallery/gallery-14-gym-sm.webp", category: "gym", width: 1600, height: 1067, alt: "Силова зона Power Place" }
+      ];
+      const POWER_BAR_SLIDES = [
+        { src: "images/bar/bar-01-coffee.webp", width: 900, height: 1125, alt: "Power Bar - кава", caption: "Кава" },
+        { src: "images/bar/bar-02-snack.webp", width: 900, height: 1125, alt: "Power Bar - корисний перекус", caption: "Корисний перекус" },
+        { src: "images/bar/bar-03-snack.webp", width: 900, height: 1125, alt: "Power Bar - корисний перекус", caption: "Корисний перекус" },
+        { src: "images/bar/bar-04-products.webp", width: 900, height: 1125, alt: "Power Bar - спортивне харчування", caption: "Спортивне харчування" }
+      ];
       const fallbackReviews = Array.from(reviewsGrid?.querySelectorAll(".review-card:not([hidden])") || []).map((card) => ({
         text: card.querySelector("p")?.textContent?.trim() || "",
         name: card.querySelector("strong")?.textContent?.trim() || "",
         rating: null
       }));
+      const prefersReducedMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+      const galleryState = {
+        filter: "all",
+        visibleCount: GALLERY_PAGE_SIZE
+      };
+      const powerBarState = {
+        activeIndex: 0,
+        timer: 0,
+        isPaused: false,
+        isVisible: false,
+        touchStartX: 0,
+        touchStartY: 0,
+        pointerHeld: false,
+        skipNextTap: false
+      };
+      let lightboxTriggerElement = null;
+      let lightboxItems = [];
+      let lightboxIndex = 0;
+      let galleryLightboxTouchStartX = 0;
+      let galleryLightboxTouchStartY = 0;
 
       const renderClubSchedule = () => {
         const scheduleTable = document.querySelector("#schedule-table");
@@ -1099,6 +1191,245 @@
             </div>
           `).join("");
         }
+      };
+
+      const getFilteredGalleryItems = () =>
+        galleryState.filter === "all"
+          ? GALLERY_ITEMS
+          : GALLERY_ITEMS.filter((item) => item.category === galleryState.filter);
+
+      const updateGalleryLoadMoreVisibility = () => {
+        if (!galleryActions || !galleryLoadMoreButton) {
+          return;
+        }
+
+        const filteredItems = getFilteredGalleryItems();
+        const shouldShow = filteredItems.length > galleryState.visibleCount;
+        galleryActions.hidden = !shouldShow;
+        galleryLoadMoreButton.hidden = !shouldShow;
+      };
+
+      const updateGalleryFilterButtons = () => {
+        galleryFilterButtons.forEach((button) => {
+          button.classList.toggle("is-active", button.dataset.galleryFilter === galleryState.filter);
+        });
+      };
+
+      const preloadGalleryLightboxNeighbors = () => {
+        if (!lightboxItems.length) {
+          return;
+        }
+
+        [lightboxIndex, (lightboxIndex + 1) % lightboxItems.length, (lightboxIndex - 1 + lightboxItems.length) % lightboxItems.length]
+          .map((index) => lightboxItems[index])
+          .forEach((item) => {
+            const preloadImage = new Image();
+            preloadImage.decoding = "async";
+            preloadImage.src = item.src;
+          });
+      };
+
+      const updateGalleryLightbox = () => {
+        const item = lightboxItems[lightboxIndex];
+
+        if (!item || !galleryLightboxImage || !galleryLightboxCounter || !galleryLightboxCaption) {
+          return;
+        }
+
+        galleryLightboxImage.src = item.src;
+        galleryLightboxImage.alt = item.alt;
+        galleryLightboxImage.width = item.width;
+        galleryLightboxImage.height = item.height;
+        galleryLightboxCounter.textContent = `${lightboxIndex + 1} / ${lightboxItems.length}`;
+        galleryLightboxCaption.textContent = item.alt;
+        preloadGalleryLightboxNeighbors();
+      };
+
+      const closeGalleryLightbox = () => {
+        if (!galleryLightbox?.classList.contains("is-open")) {
+          return;
+        }
+
+        galleryLightbox.classList.remove("is-open");
+        galleryLightbox.setAttribute("aria-hidden", "true");
+        unlockPageScrollForModal();
+        window.requestAnimationFrame(() => {
+          lightboxTriggerElement?.focus?.();
+        });
+      };
+
+      const openGalleryLightbox = (items, index, triggerElement) => {
+        if (!galleryLightbox) {
+          return;
+        }
+
+        lightboxItems = items;
+        lightboxIndex = index;
+        lightboxTriggerElement = triggerElement;
+        updateGalleryLightbox();
+        galleryLightbox.classList.add("is-open");
+        galleryLightbox.setAttribute("aria-hidden", "false");
+        lockPageScrollForModal();
+        galleryLightbox.querySelector(".gallery-lightbox-close")?.focus();
+      };
+
+      const stepGalleryLightbox = (direction) => {
+        if (!lightboxItems.length) {
+          return;
+        }
+
+        lightboxIndex = (lightboxIndex + direction + lightboxItems.length) % lightboxItems.length;
+        updateGalleryLightbox();
+      };
+
+      const renderGallery = () => {
+        if (!galleryGrid) {
+          return;
+        }
+
+        const filteredItems = getFilteredGalleryItems();
+        const visibleItems = filteredItems.slice(0, galleryState.visibleCount);
+        galleryGrid.innerHTML = "";
+
+        visibleItems.forEach((item, index) => {
+          const card = document.createElement("button");
+          card.type = "button";
+          card.className = "gallery-card";
+          card.setAttribute("aria-label", `Відкрити фото: ${item.alt}`);
+
+          const image = document.createElement("img");
+          image.src = item.srcSm;
+          image.alt = item.alt;
+          image.loading = "lazy";
+          image.decoding = "async";
+          image.width = item.width;
+          image.height = item.height;
+
+          card.appendChild(image);
+          card.addEventListener("click", () => {
+            openGalleryLightbox(filteredItems, index, card);
+          });
+          galleryGrid.appendChild(card);
+        });
+
+        updateGalleryFilterButtons();
+        updateGalleryLoadMoreVisibility();
+      };
+
+      const ensurePowerBarImage = (index) => {
+        const slide = powerBarSlidesRoot?.querySelector(`[data-power-bar-slide="${index}"] img`);
+        const image = slide;
+
+        if (image && !image.getAttribute("src")) {
+          image.setAttribute("src", image.dataset.src || "");
+        }
+      };
+
+      const shouldAutoplayPowerBar = () =>
+        Boolean(powerBarStory)
+        && powerBarState.isVisible
+        && !powerBarState.isPaused
+        && !document.hidden
+        && !prefersReducedMotionQuery.matches;
+
+      const stopPowerBarAutoplay = () => {
+        if (powerBarState.timer) {
+          window.clearTimeout(powerBarState.timer);
+          powerBarState.timer = 0;
+        }
+      };
+
+      const schedulePowerBarAutoplay = () => {
+        stopPowerBarAutoplay();
+
+        if (!shouldAutoplayPowerBar()) {
+          return;
+        }
+
+        powerBarState.timer = window.setTimeout(() => {
+          goToPowerBarSlide(powerBarState.activeIndex + 1);
+        }, POWER_BAR_AUTOPLAY_MS);
+      };
+
+      const setPowerBarPaused = (paused) => {
+        powerBarState.isPaused = paused;
+        powerBarStory?.classList.toggle("is-paused", paused);
+        schedulePowerBarAutoplay();
+      };
+
+      const updatePowerBarSlides = () => {
+        if (!powerBarSlidesRoot || !powerBarProgress || !powerBarCaption) {
+          return;
+        }
+
+        const slideElements = powerBarSlidesRoot.querySelectorAll("[data-power-bar-slide]");
+        const progressElements = powerBarProgress.querySelectorAll(".power-bar-progress-segment");
+        const normalizedIndex = (powerBarState.activeIndex + POWER_BAR_SLIDES.length) % POWER_BAR_SLIDES.length;
+        powerBarState.activeIndex = normalizedIndex;
+
+        ensurePowerBarImage(normalizedIndex);
+        ensurePowerBarImage((normalizedIndex + 1) % POWER_BAR_SLIDES.length);
+
+        slideElements.forEach((slideElement, index) => {
+          slideElement.classList.toggle("is-active", index === normalizedIndex);
+        });
+
+        progressElements.forEach((segment, index) => {
+          segment.classList.toggle("is-complete", index < normalizedIndex);
+          segment.classList.remove("is-active");
+        });
+
+        const activeSegment = progressElements[normalizedIndex];
+        if (activeSegment) {
+          void activeSegment.offsetWidth;
+          activeSegment.classList.add("is-active");
+        }
+
+        powerBarCaption.textContent = POWER_BAR_SLIDES[normalizedIndex]?.caption || "";
+        schedulePowerBarAutoplay();
+      };
+
+      const goToPowerBarSlide = (nextIndex) => {
+        powerBarState.activeIndex = (nextIndex + POWER_BAR_SLIDES.length) % POWER_BAR_SLIDES.length;
+        updatePowerBarSlides();
+      };
+
+      const renderPowerBar = () => {
+        if (!powerBarSlidesRoot || !powerBarProgress) {
+          return;
+        }
+
+        powerBarSlidesRoot.innerHTML = "";
+        powerBarProgress.innerHTML = "";
+
+        POWER_BAR_SLIDES.forEach((slide, index) => {
+          const slideElement = document.createElement("div");
+          slideElement.className = "power-bar-slide";
+          slideElement.dataset.powerBarSlide = String(index);
+
+          const image = document.createElement("img");
+          image.alt = slide.alt;
+          image.width = slide.width;
+          image.height = slide.height;
+          image.decoding = "async";
+          image.loading = index === 0 ? "eager" : "lazy";
+          if (index === 0) {
+            image.fetchPriority = "high";
+            image.src = slide.src;
+          } else {
+            image.dataset.src = slide.src;
+          }
+
+          slideElement.appendChild(image);
+          powerBarSlidesRoot.appendChild(slideElement);
+
+          const segment = document.createElement("div");
+          segment.className = "power-bar-progress-segment";
+          segment.innerHTML = '<span class="power-bar-progress-fill"></span>';
+          powerBarProgress.appendChild(segment);
+        });
+
+        updatePowerBarSlides();
       };
 
       const showReviewsEmptyState = () => {
@@ -1700,6 +2031,155 @@
         });
       });
 
+      galleryFilterButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+          galleryState.filter = button.dataset.galleryFilter || "all";
+          galleryState.visibleCount = GALLERY_PAGE_SIZE;
+          renderGallery();
+        });
+      });
+
+      galleryLoadMoreButton?.addEventListener("click", () => {
+        galleryState.visibleCount += GALLERY_PAGE_SIZE;
+        renderGallery();
+      });
+
+      galleryLightboxCloseButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+          closeGalleryLightbox();
+        });
+      });
+
+      galleryLightboxPrevButton?.addEventListener("click", () => {
+        stepGalleryLightbox(-1);
+      });
+
+      galleryLightboxNextButton?.addEventListener("click", () => {
+        stepGalleryLightbox(1);
+      });
+
+      galleryLightbox?.addEventListener("click", (event) => {
+        if (event.target === galleryLightbox || event.target.closest(".gallery-lightbox-backdrop")) {
+          closeGalleryLightbox();
+        }
+      });
+
+      galleryLightbox?.addEventListener("touchstart", (event) => {
+        const touch = event.changedTouches[0];
+        galleryLightboxTouchStartX = touch?.clientX || 0;
+        galleryLightboxTouchStartY = touch?.clientY || 0;
+      }, { passive: true });
+
+      galleryLightbox?.addEventListener("touchend", (event) => {
+        const touch = event.changedTouches[0];
+        const deltaX = (touch?.clientX || 0) - galleryLightboxTouchStartX;
+        const deltaY = (touch?.clientY || 0) - galleryLightboxTouchStartY;
+
+        if (Math.abs(deltaX) > 40 && Math.abs(deltaX) > Math.abs(deltaY)) {
+          stepGalleryLightbox(deltaX < 0 ? 1 : -1);
+        }
+      }, { passive: true });
+
+      const handlePowerBarTouchStart = (clientX, clientY) => {
+        powerBarState.touchStartX = clientX;
+        powerBarState.touchStartY = clientY;
+        powerBarState.pointerHeld = true;
+        setPowerBarPaused(true);
+      };
+
+      const handlePowerBarTouchEnd = (clientX, clientY) => {
+        const deltaX = clientX - powerBarState.touchStartX;
+        const deltaY = clientY - powerBarState.touchStartY;
+        powerBarState.pointerHeld = false;
+
+        if (Math.abs(deltaX) > 44 && Math.abs(deltaX) > Math.abs(deltaY)) {
+          powerBarState.skipNextTap = true;
+          goToPowerBarSlide(powerBarState.activeIndex + (deltaX < 0 ? 1 : -1));
+        }
+
+        setPowerBarPaused(false);
+      };
+
+      powerBarPrevButton?.addEventListener("click", (event) => {
+        event.stopPropagation();
+        setPowerBarPaused(false);
+        goToPowerBarSlide(powerBarState.activeIndex - 1);
+      });
+
+      powerBarNextButton?.addEventListener("click", (event) => {
+        event.stopPropagation();
+        setPowerBarPaused(false);
+        goToPowerBarSlide(powerBarState.activeIndex + 1);
+      });
+
+      powerBarStory?.addEventListener("click", (event) => {
+        if (event.target instanceof Element && event.target.closest(".power-bar-nav")) {
+          return;
+        }
+
+        if (powerBarState.skipNextTap) {
+          powerBarState.skipNextTap = false;
+          return;
+        }
+
+        const rect = powerBarStory.getBoundingClientRect();
+        const clickX = event.clientX - rect.left;
+        goToPowerBarSlide(powerBarState.activeIndex + (clickX >= rect.width / 2 ? 1 : -1));
+      });
+
+      powerBarStory?.addEventListener("touchstart", (event) => {
+        const touch = event.changedTouches[0];
+        handlePowerBarTouchStart(touch?.clientX || 0, touch?.clientY || 0);
+      }, { passive: true });
+
+      powerBarStory?.addEventListener("touchend", (event) => {
+        const touch = event.changedTouches[0];
+        handlePowerBarTouchEnd(touch?.clientX || 0, touch?.clientY || 0);
+      }, { passive: true });
+
+      powerBarStory?.addEventListener("mouseenter", () => {
+        setPowerBarPaused(true);
+      });
+
+      powerBarStory?.addEventListener("mouseleave", () => {
+        if (!powerBarState.pointerHeld) {
+          setPowerBarPaused(false);
+        }
+      });
+
+      powerBarStory?.addEventListener("keydown", (event) => {
+        if (event.key === "ArrowLeft") {
+          event.preventDefault();
+          goToPowerBarSlide(powerBarState.activeIndex - 1);
+        } else if (event.key === "ArrowRight") {
+          event.preventDefault();
+          goToPowerBarSlide(powerBarState.activeIndex + 1);
+        }
+      });
+
+      if ("IntersectionObserver" in window && powerBarStory) {
+        const powerBarObserver = new IntersectionObserver(
+          (entries) => {
+            const entry = entries[0];
+            powerBarState.isVisible = Boolean(entry?.isIntersecting);
+            schedulePowerBarAutoplay();
+          },
+          { threshold: 0.35 }
+        );
+
+        powerBarObserver.observe(powerBarStory);
+      } else {
+        powerBarState.isVisible = true;
+      }
+
+      document.addEventListener("visibilitychange", () => {
+        schedulePowerBarAutoplay();
+      });
+
+      prefersReducedMotionQuery.addEventListener?.("change", () => {
+        schedulePowerBarAutoplay();
+      });
+
       const syncHeaderState = (y = window.scrollY) => {
         header?.classList.toggle("is-scrolled", y > 10);
         header?.classList.toggle("header-shrunk", y > 50);
@@ -2039,6 +2519,25 @@
       });
 
       document.addEventListener("keydown", (event) => {
+        if (galleryLightbox?.classList.contains("is-open")) {
+          if (event.key === "Escape") {
+            closeGalleryLightbox();
+            return;
+          }
+
+          if (event.key === "ArrowLeft") {
+            event.preventDefault();
+            stepGalleryLightbox(-1);
+            return;
+          }
+
+          if (event.key === "ArrowRight") {
+            event.preventDefault();
+            stepGalleryLightbox(1);
+            return;
+          }
+        }
+
         if (event.key !== "Escape") {
           return;
         }
@@ -2095,6 +2594,8 @@
         });
       });
 
+      renderGallery();
+      renderPowerBar();
       syncResponsiveHeaderVisibility();
       renderClubSchedule();
       if (window.location.hash) {

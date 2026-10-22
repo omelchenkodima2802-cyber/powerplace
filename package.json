@@ -2,7 +2,13 @@
   "name": "powerplace",
   "private": true,
   "type": "module",
+  "scripts": {
+    "process:photos": "node ./scripts/process-photos.mjs"
+  },
   "dependencies": {
     "@supabase/supabase-js": "^2.49.8"
+  },
+  "devDependencies": {
+    "sharp": "^0.33.5"
   }
 }

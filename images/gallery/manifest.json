@@ -1,0 +1,114 @@
+[
+  {
+    "src": "images/gallery/gallery-01-gym.webp",
+    "srcSm": "images/gallery/gallery-01-gym-sm.webp",
+    "category": "gym",
+    "width": 1024,
+    "height": 1536,
+    "alt": "Силова зона Power Place"
+  },
+  {
+    "src": "images/gallery/gallery-02-gym.webp",
+    "srcSm": "images/gallery/gallery-02-gym-sm.webp",
+    "category": "gym",
+    "width": 1600,
+    "height": 1067,
+    "alt": "Силова зона Power Place"
+  },
+  {
+    "src": "images/gallery/gallery-03-gym.webp",
+    "srcSm": "images/gallery/gallery-03-gym-sm.webp",
+    "category": "gym",
+    "width": 1600,
+    "height": 1067,
+    "alt": "Силова зона Power Place"
+  },
+  {
+    "src": "images/gallery/gallery-04-gym.webp",
+    "srcSm": "images/gallery/gallery-04-gym-sm.webp",
+    "category": "gym",
+    "width": 1600,
+    "height": 1067,
+    "alt": "Силова зона Power Place"
+  },
+  {
+    "src": "images/gallery/gallery-05-reception.webp",
+    "srcSm": "images/gallery/gallery-05-reception-sm.webp",
+    "category": "reception",
+    "width": 1600,
+    "height": 1067,
+    "alt": "Ресепшн Power Place"
+  },
+  {
+    "src": "images/gallery/gallery-06-reception.webp",
+    "srcSm": "images/gallery/gallery-06-reception-sm.webp",
+    "category": "reception",
+    "width": 1600,
+    "height": 1067,
+    "alt": "Ресепшн Power Place"
+  },
+  {
+    "src": "images/gallery/gallery-07-gym.webp",
+    "srcSm": "images/gallery/gallery-07-gym-sm.webp",
+    "category": "gym",
+    "width": 1067,
+    "height": 1600,
+    "alt": "Силова зона Power Place"
+  },
+  {
+    "src": "images/gallery/gallery-08-gym.webp",
+    "srcSm": "images/gallery/gallery-08-gym-sm.webp",
+    "category": "gym",
+    "width": 1600,
+    "height": 1067,
+    "alt": "Силова зона Power Place"
+  },
+  {
+    "src": "images/gallery/gallery-09-locker.webp",
+    "srcSm": "images/gallery/gallery-09-locker-sm.webp",
+    "category": "locker",
+    "width": 1600,
+    "height": 1067,
+    "alt": "Роздягальня Power Place"
+  },
+  {
+    "src": "images/gallery/gallery-10-locker.webp",
+    "srcSm": "images/gallery/gallery-10-locker-sm.webp",
+    "category": "locker",
+    "width": 1600,
+    "height": 1067,
+    "alt": "Роздягальня Power Place"
+  },
+  {
+    "src": "images/gallery/gallery-11-massage.webp",
+    "srcSm": "images/gallery/gallery-11-massage-sm.webp",
+    "category": "massage",
+    "width": 1600,
+    "height": 1067,
+    "alt": "Масажний кабінет Power Place"
+  },
+  {
+    "src": "images/gallery/gallery-12-massage.webp",
+    "srcSm": "images/gallery/gallery-12-massage-sm.webp",
+    "category": "massage",
+    "width": 1067,
+    "height": 1600,
+    "alt": "Масажний кабінет Power Place"
+  },
+  {
+    "src": "images/gallery/gallery-13-gym.webp",
+    "srcSm": "images/gallery/gallery-13-gym-sm.webp",
+    "category": "gym",
+    "width": 1600,
+    "height": 1067,
+    "alt": "Силова зона Power Place"
+  },
+  {
+    "src": "images/gallery/gallery-14-gym.webp",
+    "srcSm": "images/gallery/gallery-14-gym-sm.webp",
+    "category": "gym",
+    "width": 1600,
+    "height": 1067,
+    "alt": "Силова зона Power Place"
+  }
+]
