@@ -1323,14 +1323,23 @@ ul {
 }
 
 .gallery-grid {
-  columns: 2;
-  column-gap: 10px;
+  --gallery-columns: 2;
+  --gallery-gap: 12px;
+  display: grid;
+  grid-template-columns: repeat(var(--gallery-columns), minmax(0, 1fr));
+  gap: var(--gallery-gap);
+  align-items: start;
+}
+
+.gallery-grid-column {
+  display: grid;
+  gap: var(--gallery-gap);
+  align-content: start;
+  min-width: 0;
 }
 
 .gallery-card {
-  display: inline-block;
   width: 100%;
-  margin: 0 0 10px;
   padding: 0;
   appearance: none;
   border: 1px solid var(--border);
@@ -1340,8 +1349,6 @@ ul {
     0 24px 60px rgba(0, 0, 0, 0.34),
     inset 0 1px 0 rgba(255, 255, 255, 0.05);
   overflow: hidden;
-  break-inside: avoid;
-  -webkit-column-break-inside: avoid;
   cursor: pointer;
   transition:
     transform 0.3s ease,
@@ -1366,7 +1373,8 @@ ul {
 .gallery-card img {
   display: block;
   width: 100%;
-  height: auto;
+  height: 100%;
+  object-fit: cover;
   background: rgba(var(--surface-rgb), 0.9);
 }
 
@@ -3143,18 +3151,18 @@ body.theme-modal-open {
 
 .back-to-top {
   position: fixed;
-  right: 22px;
-  bottom: 22px;
+  right: 16px;
+  bottom: calc(16px + env(safe-area-inset-bottom));
   z-index: 120;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 54px;
-  height: 54px;
-  border: 1px solid rgba(var(--champagne-rgb), 0.22);
+  width: 44px;
+  height: 44px;
+  border: 1px solid rgba(var(--white-rgb), 0.22);
   border-radius: 50%;
-  background: var(--white);
-  color: var(--bg);
+  background: rgba(var(--surface-2-rgb), 0.78);
+  color: var(--white);
   cursor: pointer;
   opacity: 0;
   visibility: hidden;
@@ -3171,9 +3179,9 @@ body.theme-modal-open {
 }
 
 .back-to-top i {
-  font-size: 1rem;
+  font-size: 0.92rem;
   line-height: 1;
-  color: var(--bg);
+  color: var(--white);
 }
 
 .back-to-top.is-visible {
@@ -3184,11 +3192,10 @@ body.theme-modal-open {
 
 .back-to-top:hover,
 .back-to-top:focus-visible {
-  border-color: rgba(var(--champagne-rgb), 0.52);
+  border-color: rgba(var(--white-rgb), 0.52);
   box-shadow:
     0 22px 42px rgba(0, 0, 0, 0.4),
-    0 0 24px rgba(var(--champagne-rgb), 0.24),
-    0 0 40px rgba(var(--amber-rgb), 0.18);
+    0 0 24px rgba(var(--white-rgb), 0.2);
 }
 
 .reveal-delay-1 {
@@ -3251,7 +3258,7 @@ body.theme-modal-open {
 
 }
 
-@media (max-width: 1024px), (hover: none) and (pointer: coarse) {
+@media (max-width: 1179px), (hover: none) and (pointer: coarse) {
   .site-header {
     transform: none;
     transition: transform 0.25s ease, box-shadow 0.25s ease;
@@ -3268,7 +3275,7 @@ body.theme-modal-open {
   }
 }
 
-@media (min-width: 1025px) and (hover: hover) {
+@media (min-width: 1180px) and (hover: hover) {
   .site-header {
     position: sticky;
     top: 0;
@@ -3288,10 +3295,6 @@ body.theme-modal-open {
   }
 
   .results-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .gallery-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
@@ -3495,20 +3498,7 @@ body.theme-modal-open {
   }
 }
 
-@media (min-width: 768px) {
-  .gallery-grid {
-    columns: 3;
-    column-gap: 12px;
-  }
-}
-
-@media (min-width: 1025px) {
-  .gallery-grid {
-    columns: 4;
-  }
-}
-
-@media (max-width: 1024px) {
+@media (max-width: 1179px) {
   .team-grid,
   .team-grid-compact {
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -3641,21 +3631,26 @@ body.theme-modal-open {
     gap: 12px;
   }
 
-  .gallery-grid {
-    column-gap: 8px;
-  }
-
-  .gallery-card {
-    margin-bottom: 8px;
-  }
-
   .gallery-filters {
-    gap: 10px;
+    flex-wrap: nowrap;
+    gap: 8px;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    padding-inline: 2px;
+  }
+
+  .gallery-filters::-webkit-scrollbar {
+    display: none;
   }
 
   .gallery-filter-button {
     min-height: 44px;
     padding: 0 16px;
+    flex: 0 0 auto;
+    scroll-snap-align: center;
   }
 
   .team-info {
@@ -3957,13 +3952,13 @@ body.theme-modal-open {
 
   .back-to-top {
     right: 16px;
-    bottom: 16px;
-    width: 50px;
-    height: 50px;
+    bottom: calc(16px + env(safe-area-inset-bottom));
+    width: 44px;
+    height: 44px;
   }
 }
 
-@media (max-width: 900px) {
+@media (max-width: 1179px) {
   .site-header {
     --mobile-header-offset: calc(64px + max(12px, env(safe-area-inset-top)));
     top: 0;

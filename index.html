@@ -650,8 +650,8 @@
           <div class="team-modal-content">
             <span class="eyebrow" id="team-modal-role"></span>
             <h2 id="team-modal-name"></h2>
-            <!-- TEMP-HIDDEN: блок управляется из JS, верни отображение для профиля через aboutVisible:true -->
-            <section class="team-modal-section" id="team-modal-about">
+            <!-- TEMP-HIDDEN: убери hidden, когда будет реальное фото -->
+            <section class="team-modal-section" id="team-modal-about" hidden>
               <h3>Про мене</h3>
               <p id="team-modal-description"></p>
             </section>
@@ -1048,13 +1048,14 @@
       const headerBurger = document.querySelector(".header-burger");
       const headerNav = document.querySelector("#site-nav");
       const headerNavLinks = document.querySelectorAll("#site-nav a");
-      const mobileHeaderWidthQuery = window.matchMedia("(max-width: 1024px)");
+      const mobileHeaderWidthQuery = window.matchMedia("(max-width: 1179px)");
       const coarsePointerHeaderQuery = window.matchMedia("(hover: none) and (pointer: coarse)");
       const backToTopButton = document.querySelector(".back-to-top");
       const bookingForm = document.getElementById("booking-form");
       const bookingPhone = document.querySelector("#booking-phone");
       const bookingFeedback = document.querySelector("#booking-feedback");
       const bookingSubmit = bookingForm?.querySelector(".booking-submit");
+      const galleryFilters = document.querySelector(".gallery-filters");
       const galleryGrid = document.querySelector("#gallery-grid");
       const galleryActions = document.querySelector("#gallery-actions");
       const galleryLoadMoreButton = document.querySelector("#gallery-load-more");
@@ -1117,13 +1118,20 @@
       let headerScrollTicking = false;
       let approvedReviews = [];
       let visibleReviewsCount = 0;
+      let galleryResizeTimer = 0;
       const REVIEWS_PAGE_SIZE = 6;
       const CLUB_SCHEDULE = [
-        { days: "Пн, Вт, Ср, Чт, Пт", time: "07:00 – 22:00" },
-        { days: "Сб, Нд", time: "09:00 – 20:00" }
+        { days: "Пн", time: "07:00 – 22:00" },
+        { days: "Вт", time: "07:00 – 22:00" },
+        { days: "Ср", time: "07:00 – 22:00" },
+        { days: "Чт", time: "07:00 – 22:00" },
+        { days: "Пт", time: "07:00 – 22:00" },
+        { days: "Сб", time: "09:00 – 20:00" },
+        { days: "Нд", time: "09:00 – 20:00" }
       ];
       const GOOGLE_REVIEW_URL = "";
       const GALLERY_PAGE_SIZE = 8;
+      const GALLERY_BALANCE_THRESHOLD = 0.16;
       const POWER_BAR_AUTOPLAY_MS = 4500;
       const GALLERY_ITEMS = [
         { src: "images/gallery/gallery-01-gym.webp", srcSm: "images/gallery/gallery-01-gym-sm.webp", category: "gym", width: 1024, height: 1536, alt: "Силова зона Power Place" },
@@ -1155,7 +1163,8 @@
       const prefersReducedMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
       const galleryState = {
         filter: "all",
-        visibleCount: GALLERY_PAGE_SIZE
+        visibleCount: GALLERY_PAGE_SIZE,
+        hasExpanded: false
       };
       const powerBarState = {
         activeIndex: 0,
@@ -1198,6 +1207,96 @@
           ? GALLERY_ITEMS
           : GALLERY_ITEMS.filter((item) => item.category === galleryState.filter);
 
+      const getGalleryColumnCount = (width = window.innerWidth) => {
+        if (width < 600) {
+          return 2;
+        }
+
+        if (width < 1280) {
+          return 3;
+        }
+
+        return 4;
+      };
+
+      const getGalleryGap = (width = window.innerWidth) => (width < 600 ? 8 : 12);
+
+      const getGalleryVisibleCandidates = (columnCount, totalItems) => {
+        const candidatesMap = {
+          2: [8, 10],
+          3: [9, 12],
+          4: [8, 12]
+        };
+
+        return (candidatesMap[columnCount] || [GALLERY_PAGE_SIZE])
+          .map((count) => Math.min(count, totalItems))
+          .filter((count, index, counts) => count > 0 && counts.indexOf(count) === index);
+      };
+
+      const getGalleryLoadIncrement = (columnCount) => {
+        if (columnCount === 2) {
+          return 10;
+        }
+
+        return 12;
+      };
+
+      const getBalancedGalleryHeights = (items, columnCount) => {
+        const columnHeights = Array.from({ length: columnCount }, () => 0);
+
+        items.forEach((item) => {
+          const shortestColumnHeight = Math.min(...columnHeights);
+          const shortestColumnIndex = columnHeights.indexOf(shortestColumnHeight);
+          columnHeights[shortestColumnIndex] += item.height / item.width;
+        });
+
+        return columnHeights;
+      };
+
+      const getAdaptiveGalleryVisibleCount = (items) => {
+        const totalItems = items.length;
+        const columnCount = getGalleryColumnCount();
+        const candidates = getGalleryVisibleCandidates(columnCount, totalItems);
+
+        if (!candidates.length) {
+          return 0;
+        }
+
+        if (candidates.length === 1) {
+          return candidates[0];
+        }
+
+        const [baseCount, expandedCount] = candidates;
+        const baseHeights = getBalancedGalleryHeights(items.slice(0, baseCount), columnCount);
+        const tallestColumn = Math.max(...baseHeights);
+        const shortestColumn = Math.min(...baseHeights);
+        const imbalance = tallestColumn === 0 ? 0 : (tallestColumn - shortestColumn) / tallestColumn;
+
+        return imbalance > GALLERY_BALANCE_THRESHOLD ? expandedCount : baseCount;
+      };
+
+      const centerActiveGalleryFilter = () => {
+        if (!galleryFilters || window.innerWidth >= 600) {
+          return;
+        }
+
+        const activeButton = galleryFilters.querySelector(".gallery-filter-button.is-active");
+
+        if (!activeButton) {
+          return;
+        }
+
+        const targetLeft = Math.max(
+          0,
+          activeButton.offsetLeft - (galleryFilters.clientWidth - activeButton.offsetWidth) / 2
+        );
+
+        galleryFilters.scrollTo({
+          left: targetLeft,
+          behavior: prefersReducedMotionQuery.matches ? "auto" : "smooth"
+        });
+      };
+
       const updateGalleryLoadMoreVisibility = () => {
         if (!galleryActions || !galleryLoadMoreButton) {
           return;
@@ -1213,6 +1312,7 @@
         galleryFilterButtons.forEach((button) => {
           button.classList.toggle("is-active", button.dataset.galleryFilter === galleryState.filter);
         });
+        centerActiveGalleryFilter();
       };
 
       const preloadGalleryLightboxNeighbors = () => {
@@ -1288,28 +1388,57 @@
         }
 
         const filteredItems = getFilteredGalleryItems();
+        const columnCount = getGalleryColumnCount();
+        const gap = getGalleryGap();
+
+        if (!galleryState.hasExpanded) {
+          galleryState.visibleCount = getAdaptiveGalleryVisibleCount(filteredItems);
+        }
+
         const visibleItems = filteredItems.slice(0, galleryState.visibleCount);
-        galleryGrid.innerHTML = "";
+        const columnModels = Array.from({ length: columnCount }, () => ({
+          items: [],
+          estimatedHeight: 0
+        }));
 
         visibleItems.forEach((item, index) => {
-          const card = document.createElement("button");
-          card.type = "button";
-          card.className = "gallery-card";
-          card.setAttribute("aria-label", `Відкрити фото: ${item.alt}`);
+          const shortestColumnHeight = Math.min(...columnModels.map((column) => column.estimatedHeight));
+          const shortestColumn = columnModels.find((column) => column.estimatedHeight === shortestColumnHeight) || columnModels[0];
+          shortestColumn.items.push({ item, index });
+          shortestColumn.estimatedHeight += item.height / item.width;
+        });
 
-          const image = document.createElement("img");
-          image.src = item.srcSm;
-          image.alt = item.alt;
-          image.loading = "lazy";
-          image.decoding = "async";
-          image.width = item.width;
-          image.height = item.height;
+        galleryGrid.style.setProperty("--gallery-columns", String(columnCount));
+        galleryGrid.style.setProperty("--gallery-gap", `${gap}px`);
+        galleryGrid.innerHTML = "";
 
-          card.appendChild(image);
-          card.addEventListener("click", () => {
-            openGalleryLightbox(filteredItems, index, card);
+        columnModels.forEach((columnModel) => {
+          const column = document.createElement("div");
+          column.className = "gallery-grid-column";
+
+          columnModel.items.forEach(({ item, index }) => {
+            const card = document.createElement("button");
+            card.type = "button";
+            card.className = "gallery-card";
+            card.setAttribute("aria-label", `Відкрити фото: ${item.alt}`);
+            card.style.aspectRatio = `${item.width} / ${item.height}`;
+
+            const image = document.createElement("img");
+            image.src = item.srcSm;
+            image.alt = item.alt;
+            image.loading = "lazy";
+            image.decoding = "async";
+            image.width = item.width;
+            image.height = item.height;
+
+            card.appendChild(image);
+            card.addEventListener("click", () => {
+              openGalleryLightbox(filteredItems, index, card);
+            });
+            column.appendChild(card);
           });
-          galleryGrid.appendChild(card);
+
+          galleryGrid.appendChild(column);
         });
 
         updateGalleryFilterButtons();
@@ -1480,7 +1609,7 @@
         });
       };
 
-      const isMobileHeader = () => window.innerWidth <= 900;
+      const isMobileHeader = () => window.innerWidth <= 1179;
       const shouldUseHideableHeader = () =>
         mobileHeaderWidthQuery.matches || coarsePointerHeaderQuery.matches;
       const anchorLinks = document.querySelectorAll('a[href^="#"]');
@@ -2034,13 +2163,14 @@
       galleryFilterButtons.forEach((button) => {
         button.addEventListener("click", () => {
           galleryState.filter = button.dataset.galleryFilter || "all";
-          galleryState.visibleCount = GALLERY_PAGE_SIZE;
+          galleryState.hasExpanded = false;
           renderGallery();
         });
       });
 
       galleryLoadMoreButton?.addEventListener("click", () => {
-        galleryState.visibleCount += GALLERY_PAGE_SIZE;
+        galleryState.hasExpanded = true;
+        galleryState.visibleCount += getGalleryLoadIncrement(getGalleryColumnCount());
         renderGallery();
       });
 
@@ -2183,7 +2313,7 @@
       const syncHeaderState = (y = window.scrollY) => {
         header?.classList.toggle("is-scrolled", y > 10);
         header?.classList.toggle("header-shrunk", y > 50);
-        backToTopButton?.classList.toggle("is-visible", y > 300);
+        backToTopButton?.classList.toggle("is-visible", y > 600);
       };
 
       const syncResponsiveHeaderVisibility = () => {
@@ -2661,6 +2791,10 @@
       window.addEventListener("resize", () => {
         lastHeaderScrollY = Math.max(0, window.scrollY);
         syncResponsiveHeaderVisibility();
+        window.clearTimeout(galleryResizeTimer);
+        galleryResizeTimer = window.setTimeout(() => {
+          renderGallery();
+        }, 160);
         if (!isMobileHeader()) {
           closeMobileMenu();
           showHeader();
