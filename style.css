@@ -2113,6 +2113,18 @@ ul {
   color: rgba(255, 255, 255, 0.82);
   line-height: 1.7;
   text-align: left;
+  white-space: pre-line;
+}
+
+.team-modal-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.team-modal-actions .button {
+  min-height: 48px;
+  padding-inline: 22px;
 }
 
 .modal-results {

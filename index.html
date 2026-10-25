@@ -301,9 +301,9 @@
             <h3>Сервіс та підтримка щодня</h3>
           </div>
           <div class="team-grid team-grid-compact">
-            <article class="team-card team-card-compact" data-role="admin" data-id="renata" role="button" tabindex="0" aria-label="Детальніше про Іонову Ренату">
-              <div class="team-photo has-image"><img src="images/team/renata.jpg" alt="Адміністратор Іонова Рената" loading="lazy"></div>
-              <div class="team-info"><h4>Іонова Рената</h4><p class="team-role">Адміністратор</p></div>
+            <article class="team-card team-card-compact" data-role="admin" data-id="vacancy-admin" data-visible="false" role="button" tabindex="0" aria-label="Детальніше про вакансію адміністратора" hidden>
+              <div class="team-photo has-image"><img src="images/logo.png" alt="Вакансія адміністратора Power Place" loading="lazy"></div>
+              <div class="team-info"><h4>Ми шукаємо адміністратора</h4><p class="team-role">Приєднуйтесь до команди Power Place</p></div>
               <div class="team-card-hover"><span>Детальніше</span><i class="fa-solid fa-plus" aria-hidden="true"></i></div>
             </article>
           </div>
@@ -655,6 +655,11 @@
               <h3>Про мене</h3>
               <p id="team-modal-description"></p>
             </section>
+            <div class="team-modal-actions" id="team-modal-actions" hidden>
+              <a class="button button-primary" id="team-modal-call" href="tel:+380688868880">Зателефонувати</a>
+              <a class="button button-secondary" id="team-modal-viber" href="viber://chat?number=%2B380688868880">Написати в Viber</a>
+              <a class="button button-secondary" id="team-modal-telegram" href="https://t.me/+380688868880" target="_blank" rel="noreferrer">Написати в Telegram</a>
+            </div>
             <div class="modal-results" id="modal-results-section" hidden>
               <h3>Результати учнів</h3>
               <div class="results-grid" id="modal-results-grid"></div>
@@ -1043,6 +1048,9 @@
       const teamFilterButtons = document.querySelectorAll(".team-filter-button");
       const teamGroups = document.querySelectorAll("[data-team-group]");
       const teamCards = document.querySelectorAll(".team-card");
+      const adminTeamGroup = document.querySelector('[data-team-group="admin"]');
+      const adminTeamFilterButton = document.querySelector('.team-filter-button[data-filter="admin"]');
+      const adminVacancyCard = document.querySelector('[data-id="vacancy-admin"]');
       const header = document.querySelector(".site-header");
       const headerLogoLink = document.querySelector(".hdr__logo");
       const headerBurger = document.querySelector(".header-burger");
@@ -1091,16 +1099,26 @@
       const teamModalName = document.querySelector("#team-modal-name");
       const teamModalDescription = document.querySelector("#team-modal-description");
       const teamModalAbout = document.querySelector("#team-modal-about");
-      const teamModalResultsSection = document.querySelector("#team-modal-results-section");
+      const teamModalActions = document.querySelector("#team-modal-actions");
+      const teamModalCall = document.querySelector("#team-modal-call");
+      const teamModalViber = document.querySelector("#team-modal-viber");
+      const teamModalTelegram = document.querySelector("#team-modal-telegram");
+      const teamModalResultsSection = document.querySelector("#modal-results-section");
       const teamModalResultsGrid = document.querySelector("#team-modal-results-grid");
       const throttleTargets = document.querySelectorAll(".button:not(.booking-submit):not(.review-submit), .team-filter-button");
       const TEAM_FILTER_DURATION = 240;
       const BUTTON_THROTTLE_DURATION = 2000;
+      const VACANCY_ACTIVE = true;
+      const VACANCY_TEAM_ID = "vacancy-admin";
+      const CLUB_PHONE_HREF = "tel:+380688868880";
+      const CLUB_VIBER_HREF = "viber://chat?number=%2B380688868880";
+      const CLUB_TELEGRAM_HREF = "https://t.me/+380688868880";
 
       const buildResultsPaths = (slug, count = 4) =>
         Array.from({ length: count }, (_, index) => `images/team/results/${slug}/${index + 1}.jpg`);
 
       const hiddenResultsIds = new Set();
+      hiddenResultsIds.add(VACANCY_TEAM_ID);
       const FORM_COOLDOWN_MS = 60000;
       const FORM_MODAL_AUTOCLOSE_MS = 3000;
       const STORAGE_KEYS = {
@@ -1891,13 +1909,20 @@
           aboutVisible: false,
           description: "Професійний тренер клубу Power Place."
         },
-        renata: {
-          name: "Іонова Рената",
-          role: "Адміністратор",
-          photo: "images/team/renata.jpg",
-          description: "Адміністратор клубу Power Place."
+        [VACANCY_TEAM_ID]: {
+          name: "Ми шукаємо адміністратора",
+          role: "Приєднуйтесь до команди Power Place",
+          photo: "images/logo.png",
+          photoAlt: "Вакансія адміністратора Power Place",
+          showActions: true,
+          telegramHref: CLUB_TELEGRAM_HREF,
+          description: `Обов’язки: зустріч і супровід клієнтів, оформлення абонементів, запис на тренування та масаж, відповіді на дзвінки й у месенджерах, підтримка чистоти та порядку на ресепшні.
+Вимоги: комунікабельність, акуратність, відповідальність. Досвід у сервісі буде плюсом.
+Умови роботи (графік та оплата) обговорюємо по телефону.`
         }
       };
+      let activeTeamFilter = "all";
+      let lastTeamModalTrigger = null;
 
       const openReviewModal = () => {
         clearModalAutoCloseTimer();
@@ -1918,6 +1943,7 @@
         teamModal?.classList.remove("is-open");
         teamModal?.setAttribute("aria-hidden", "true");
         unlockPageScrollForModal();
+        lastTeamModalTrigger?.focus?.();
       };
 
       const scheduleModalAutoClose = (form, delayMs = FORM_MODAL_AUTOCLOSE_MS) => {
@@ -1997,15 +2023,53 @@
         firstPreview.src = resultPaths[0];
       };
 
-      const openTeamModal = (teamId) => {
+      const updateTeamModalActions = (profile) => {
+        if (!teamModalActions || !teamModalCall || !teamModalViber || !teamModalTelegram) {
+          return;
+        }
+
+        const shouldShowActions = Boolean(profile?.showActions);
+        teamModalActions.hidden = !shouldShowActions;
+        teamModalCall.href = CLUB_PHONE_HREF;
+        teamModalViber.href = CLUB_VIBER_HREF;
+        teamModalTelegram.href = profile?.telegramHref || CLUB_TELEGRAM_HREF;
+      };
+
+      const syncAdministrationState = () => {
+        const adminCards = Array.from(adminTeamGroup?.querySelectorAll(".team-card") || []);
+        const hasAdministrators = adminCards.some(
+          (card) => card.dataset.id !== VACANCY_TEAM_ID && card.dataset.visible !== "false"
+        );
+        const shouldShowVacancy = VACANCY_ACTIVE && !hasAdministrators;
+
+        if (adminVacancyCard) {
+          adminVacancyCard.dataset.visible = shouldShowVacancy ? "true" : "false";
+          adminVacancyCard.hidden = !shouldShowVacancy;
+        }
+
+        const hasAdminContent = adminCards.some((card) => card.dataset.visible !== "false");
+
+        if (adminTeamFilterButton) {
+          adminTeamFilterButton.hidden = !hasAdminContent;
+        }
+
+        if (!hasAdminContent && activeTeamFilter === "admin") {
+          activeTeamFilter = "all";
+        }
+
+        return hasAdminContent;
+      };
+
+      const openTeamModal = (teamId, triggerElement = null) => {
         const profile = teamProfiles[teamId];
 
         if (!profile || profile.visible === false || !teamModal) {
           return;
         }
 
+        lastTeamModalTrigger = triggerElement instanceof HTMLElement ? triggerElement : null;
         teamModalPhoto.src = profile.photo;
-        teamModalPhoto.alt = `${profile.role} ${profile.name}`;
+        teamModalPhoto.alt = profile.photoAlt || `${profile.role} ${profile.name}`;
         teamModalPhoto.loading = "eager";
         teamModalRole.textContent = profile.role;
         teamModalName.textContent = profile.name;
@@ -2013,11 +2077,13 @@
         if (teamModalAbout) {
           teamModalAbout.hidden = profile.aboutVisible === false;
         }
+        updateTeamModalActions(profile);
         renderTeamResults(teamId, profile);
 
         teamModal.classList.add("is-open");
         teamModal.setAttribute("aria-hidden", "false");
         lockPageScrollForModal();
+        teamModal.querySelector(".team-modal-close")?.focus();
       };
 
       const setTemporaryDisabled = (element, duration = BUTTON_THROTTLE_DURATION) => {
@@ -2070,6 +2136,9 @@
       };
 
       const applyTeamFilter = (filter) => {
+        syncAdministrationState();
+        activeTeamFilter = filter === "admin" && adminTeamFilterButton?.hidden ? "all" : filter;
+
         teamGroups.forEach((group) => {
           group.hidden = false;
         });
@@ -2080,7 +2149,7 @@
             return;
           }
 
-          const matches = filter === "all" || card.dataset.role === filter;
+          const matches = activeTeamFilter === "all" || card.dataset.role === activeTeamFilter;
 
           if (card._hideTimer) {
             clearTimeout(card._hideTimer);
@@ -2109,7 +2178,7 @@
         });
 
         teamFilterButtons.forEach((button) => {
-          button.classList.toggle("is-active", button.dataset.filter === filter);
+          button.classList.toggle("is-active", button.dataset.filter === activeTeamFilter);
         });
 
         window.setTimeout(updateTeamGroupsVisibility, TEAM_FILTER_DURATION + 20);
@@ -2140,7 +2209,7 @@
       });
 
       teamCards.forEach((card) => {
-        const openDetails = () => openTeamModal(card.dataset.id);
+        const openDetails = () => openTeamModal(card.dataset.id, card);
 
         card.addEventListener("click", () => {
           openDetails();
@@ -2737,7 +2806,8 @@
         window.scrollTo(0, 0);
       }, { once: true });
       window.addEventListener("scroll", handleHeaderScroll, { passive: true });
-      applyTeamFilter("all");
+      syncAdministrationState();
+      applyTeamFilter(activeTeamFilter);
 
       backToTopButton?.addEventListener("click", () => {
         window.scrollTo({ top: 0, behavior: "smooth" });
