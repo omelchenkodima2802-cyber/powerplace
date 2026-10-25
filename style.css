@@ -2010,8 +2010,10 @@ ul {
   position: relative;
   z-index: 1;
   width: min(100%, 1080px);
-  max-height: min(90vh, 920px);
-  overflow: auto;
+  max-height: 90dvh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
   padding: 34px;
   border-radius: var(--radius-lg);
   border: 1px solid rgba(var(--white-rgb), 0.22);
@@ -2033,9 +2035,11 @@ ul {
 }
 
 .team-modal-close {
-  position: absolute;
-  top: 18px;
-  right: 18px;
+  position: sticky;
+  top: 0;
+  margin-left: auto;
+  margin-bottom: -44px;
+  z-index: 4;
   width: 44px;
   height: 44px;
   display: flex;
@@ -2071,6 +2075,8 @@ ul {
 .team-modal-photo-wrap {
   position: sticky;
   top: 0;
+  display: grid;
+  place-items: center;
   overflow: hidden;
   border-radius: 24px;
   border: 1px solid rgba(var(--white-rgb), 0.16);
@@ -2084,6 +2090,22 @@ ul {
   width: 100%;
   aspect-ratio: 4 / 5;
   object-fit: cover;
+}
+
+.team-modal-photo-wrap.is-vacancy {
+  min-height: min(46vh, 420px);
+  padding: 32px;
+  background:
+    radial-gradient(circle at top, rgba(var(--white-rgb), 0.1), transparent 52%),
+    linear-gradient(180deg, rgba(var(--bg-rgb), 0.96), rgba(var(--surface-2-rgb), 0.98));
+}
+
+.team-modal-photo-wrap img.is-vacancy {
+  width: 100%;
+  max-width: 240px;
+  height: auto;
+  aspect-ratio: auto;
+  object-fit: contain;
 }
 
 .team-modal-content {
@@ -2116,14 +2138,40 @@ ul {
   white-space: pre-line;
 }
 
+.team-modal-vacancy-details {
+  display: grid;
+  gap: 16px;
+}
+
+.team-modal-vacancy-block {
+  display: grid;
+  gap: 8px;
+}
+
+.team-modal-vacancy-title {
+  color: var(--white);
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.team-modal-vacancy-text {
+  margin: 0;
+  color: var(--gray-light);
+  line-height: 1.6;
+  text-align: left;
+  white-space: normal;
+}
+
 .team-modal-actions {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 12px;
 }
 
 .team-modal-actions .button {
+  flex: 1 1 0;
   min-height: 48px;
+  width: 100%;
   padding-inline: 22px;
 }
 
@@ -3748,7 +3796,7 @@ body.theme-modal-open {
     top: 50%;
     left: 50%;
     width: 90%;
-    max-height: 84vh;
+    max-height: 90dvh;
     overflow-y: auto;
     overflow-x: hidden;
     overscroll-behavior: contain;
@@ -3798,6 +3846,14 @@ body.theme-modal-open {
     box-shadow: 0 0 18px rgba(var(--white-rgb), 0.22);
   }
 
+  .team-modal-close {
+    position: sticky;
+    top: 0;
+    right: auto;
+    margin-left: auto;
+    margin-bottom: -48px;
+  }
+
   .review-modal-close i,
   .team-modal-close i,
   .theme-admin-close i {
@@ -3814,6 +3870,24 @@ body.theme-modal-open {
   .team-modal-content {
     gap: 12px;
     padding-right: 48px;
+  }
+
+  .team-modal-actions {
+    flex-direction: column;
+  }
+
+  .team-modal-actions .button {
+    flex: 1 1 auto;
+    width: 100%;
+  }
+
+  .team-modal-photo-wrap.is-vacancy {
+    min-height: 220px;
+    padding: 24px;
+  }
+
+  .team-modal-photo-wrap img.is-vacancy {
+    max-width: 180px;
   }
 
   .team-modal-section,

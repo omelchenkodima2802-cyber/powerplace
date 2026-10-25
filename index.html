@@ -644,7 +644,7 @@
           <i class="fa-solid fa-xmark" aria-hidden="true"></i>
         </button>
         <div class="team-modal-layout">
-          <div class="team-modal-photo-wrap">
+          <div class="team-modal-photo-wrap" id="team-modal-photo-wrap">
             <img id="team-modal-photo" src="images/logo.png" alt="Портрет спеціаліста PowerPlace" loading="lazy">
           </div>
           <div class="team-modal-content">
@@ -652,8 +652,9 @@
             <h2 id="team-modal-name"></h2>
             <!-- TEMP-HIDDEN: убери hidden, когда будет реальное фото -->
             <section class="team-modal-section" id="team-modal-about" hidden>
-              <h3>Про мене</h3>
+              <h3 id="team-modal-about-title">Про мене</h3>
               <p id="team-modal-description"></p>
+              <div class="team-modal-vacancy-details" id="team-modal-vacancy-details" hidden></div>
             </section>
             <div class="team-modal-actions" id="team-modal-actions" hidden>
               <a class="button button-primary" id="team-modal-call" href="tel:+380688868880">Зателефонувати</a>
@@ -1094,10 +1095,13 @@
       const reviewSubmit = reviewForm?.querySelector(".review-submit");
       const teamModal = document.querySelector("#team-modal");
       const teamModalCloseButtons = document.querySelectorAll("[data-close-team-modal]");
+      const teamModalPhotoWrap = document.querySelector("#team-modal-photo-wrap");
       const teamModalPhoto = document.querySelector("#team-modal-photo");
       const teamModalRole = document.querySelector("#team-modal-role");
       const teamModalName = document.querySelector("#team-modal-name");
+      const teamModalAboutTitle = document.querySelector("#team-modal-about-title");
       const teamModalDescription = document.querySelector("#team-modal-description");
+      const teamModalVacancyDetails = document.querySelector("#team-modal-vacancy-details");
       const teamModalAbout = document.querySelector("#team-modal-about");
       const teamModalActions = document.querySelector("#team-modal-actions");
       const teamModalCall = document.querySelector("#team-modal-call");
@@ -1912,13 +1916,26 @@
         [VACANCY_TEAM_ID]: {
           name: "Ми шукаємо адміністратора",
           role: "Приєднуйтесь до команди Power Place",
-          photo: "images/logo.png",
+          photo: "images/logo-power-place-emblem.png",
           photoAlt: "Вакансія адміністратора Power Place",
           showActions: true,
+          vacancyMode: true,
           telegramHref: CLUB_TELEGRAM_HREF,
-          description: `Обов’язки: зустріч і супровід клієнтів, оформлення абонементів, запис на тренування та масаж, відповіді на дзвінки й у месенджерах, підтримка чистоти та порядку на ресепшні.
-Вимоги: комунікабельність, акуратність, відповідальність. Досвід у сервісі буде плюсом.
-Умови роботи (графік та оплата) обговорюємо по телефону.`
+          description: "",
+          sections: [
+            {
+              title: "Обов’язки",
+              text: "зустріч і супровід клієнтів, оформлення абонементів, запис на тренування та масаж, відповіді на дзвінки й у месенджерах, підтримка чистоти та порядку на ресепшні."
+            },
+            {
+              title: "Вимоги",
+              text: "комунікабельність, акуратність, відповідальність. Досвід у сервісі буде плюсом."
+            },
+            {
+              title: "Умови роботи",
+              text: "графік та оплату обговорюємо по телефону."
+            }
+          ]
         }
       };
       let activeTeamFilter = "all";
@@ -2035,6 +2052,43 @@
         teamModalTelegram.href = profile?.telegramHref || CLUB_TELEGRAM_HREF;
       };
 
+      const renderTeamModalAbout = (profile) => {
+        if (!teamModalAboutTitle || !teamModalDescription || !teamModalVacancyDetails) {
+          return;
+        }
+
+        const isVacancy = Boolean(profile?.vacancyMode);
+        teamModalAboutTitle.textContent = isVacancy ? "Про вакансію" : "Про мене";
+        teamModalDescription.hidden = isVacancy;
+        teamModalVacancyDetails.hidden = !isVacancy;
+
+        if (isVacancy) {
+          teamModalDescription.textContent = "";
+          teamModalVacancyDetails.innerHTML = "";
+
+          (profile.sections || []).forEach((section) => {
+            const block = document.createElement("div");
+            block.className = "team-modal-vacancy-block";
+
+            const title = document.createElement("strong");
+            title.className = "team-modal-vacancy-title";
+            title.textContent = section.title;
+
+            const text = document.createElement("p");
+            text.className = "team-modal-vacancy-text";
+            text.textContent = section.text;
+
+            block.append(title, text);
+            teamModalVacancyDetails.appendChild(block);
+          });
+          return;
+        }
+
+        teamModalVacancyDetails.innerHTML = "";
+        teamModalDescription.hidden = false;
+        teamModalDescription.textContent = profile?.description || "";
+      };
+
       const syncAdministrationState = () => {
         const adminCards = Array.from(adminTeamGroup?.querySelectorAll(".team-card") || []);
         const hasAdministrators = adminCards.some(
@@ -2071,9 +2125,11 @@
         teamModalPhoto.src = profile.photo;
         teamModalPhoto.alt = profile.photoAlt || `${profile.role} ${profile.name}`;
         teamModalPhoto.loading = "eager";
+        teamModalPhotoWrap?.classList.toggle("is-vacancy", Boolean(profile.vacancyMode));
+        teamModalPhoto?.classList.toggle("is-vacancy", Boolean(profile.vacancyMode));
         teamModalRole.textContent = profile.role;
         teamModalName.textContent = profile.name;
-        teamModalDescription.textContent = profile.description;
+        renderTeamModalAbout(profile);
         if (teamModalAbout) {
           teamModalAbout.hidden = profile.aboutVisible === false;
         }
